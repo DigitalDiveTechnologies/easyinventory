@@ -1,4 +1,4 @@
-﻿using MYBUSINESS.Models;
+using MYBUSINESS.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,6 +31,10 @@ namespace LMSMYBUSINESS.Models
                 //    //////base.OnActionExecuting(filterContext);
                 //}
 
+                return;
+            }
+            if (string.Equals(CurrentController, "Account", StringComparison.OrdinalIgnoreCase))
+            {
                 return;
             }
             if (HttpContext.Current.Session["CurrentUser"] == null && CurrentController == "UserManagement" && CurrentAction == "Login")

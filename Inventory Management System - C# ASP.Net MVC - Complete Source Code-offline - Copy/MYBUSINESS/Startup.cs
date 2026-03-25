@@ -1,14 +1,15 @@
-﻿using Microsoft.Owin;
+using Microsoft.Owin;
 using Owin;
 
-//[assembly: OwinStartupAttribute(typeof(MYBUSINESS.Startup))]
+[assembly: OwinStartup(typeof(MYBUSINESS.Startup))]
+
 namespace MYBUSINESS
 {
     public partial class Startup
     {
         public void Configuration(IAppBuilder app)
         {
-            //ConfigureAuth(app);
+            ConfigureAuth(app);
         }
     }
 }
