@@ -341,8 +341,11 @@
     <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="App_Data\bmsFresh.mdf" />
-    <Content Include="App_Data\bmsFresh_log.ldf">
+    <Content Include="..\bmsFresh.mdf">
+      <Link>App_Data\bmsFresh.mdf</Link>
+    </Content>
+    <Content Include="..\bmsFresh_log.ldf">
+      <Link>App_Data\bmsFresh_log.ldf</Link>
       <DependentUpon>bmsFresh.mdf</DependentUpon>
     </Content>
     <Content Include="bower_components\bootstrap-slider\.bower.json" />

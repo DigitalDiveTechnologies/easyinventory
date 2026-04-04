@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+      - master
+  pull_request:
+    branches:
+      - dev
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        run: msbuild MYBUSINESS.sln -t:Restore -p:RestorePackagesConfig=true
+
+      - name: Build solution
+        run: msbuild MYBUSINESS.sln -p:Configuration=Release -p:Platform="Any CPU" -m

@@ -1,0 +1,41 @@
+name: CD
+
+on:
+  push:
+    branches:
+      - dev
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        run: msbuild MYBUSINESS.sln -t:Restore -p:RestorePackagesConfig=true
+
+      - name: Build solution
+        run: msbuild MYBUSINESS.sln -p:Configuration=Release -p:Platform="Any CPU" -m
+
+      - name: Create deployment package
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File .\.github\scripts\package-site.ps1
+
+      - name: Upload deployment artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: easyinventory-site-package
+          path: artifacts
+          if-no-files-found: error
+          retention-days: 14

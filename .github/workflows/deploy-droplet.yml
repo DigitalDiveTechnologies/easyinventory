@@ -1,0 +1,80 @@
+name: Deploy To Droplet
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - dev
+      - main
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup MSBuild
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Restore NuGet packages
+        run: msbuild MYBUSINESS.sln -t:Restore -p:RestorePackagesConfig=true
+
+      - name: Build solution
+        run: msbuild MYBUSINESS.sln -p:Configuration=Release -p:Platform="Any CPU" -m
+
+      - name: Create deployment package
+        shell: powershell
+        run: powershell -ExecutionPolicy Bypass -File .\.github\scripts\package-site.ps1
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: easyinventory-site-package
+          path: artifacts/easyinventory-site.zip
+          if-no-files-found: error
+          retention-days: 14
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: package
+    environment: production
+
+    steps:
+      - name: Download workflow artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: easyinventory-site-package
+          path: artifacts
+
+      - name: Prepare SSH key
+        env:
+          DROPLET_SSH_KEY: ${{ secrets.DROPLET_SSH_KEY }}
+        run: |
+          test -n "$DROPLET_SSH_KEY"
+          mkdir -p ~/.ssh
+          printf '%s\n' "$DROPLET_SSH_KEY" > ~/.ssh/droplet_key
+          chmod 600 ~/.ssh/droplet_key
+
+      - name: Upload package to droplet
+        env:
+          DROPLET_HOST: ${{ secrets.DROPLET_HOST }}
+          DROPLET_USER: ${{ secrets.DROPLET_USER }}
+          DROPLET_TARGET_PATH: ${{ secrets.DROPLET_TARGET_PATH }}
+        run: |
+          test -n "$DROPLET_HOST"
+          test -n "$DROPLET_USER"
+          TARGET_PATH="${DROPLET_TARGET_PATH:-/opt/smartpos/easyinventory}"
+          RELEASE_NAME="${GITHUB_SHA}"
+          ssh -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new "$DROPLET_USER@$DROPLET_HOST" "mkdir -p \"$TARGET_PATH/releases/$RELEASE_NAME\""
+          scp -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new artifacts/easyinventory-site.zip "$DROPLET_USER@$DROPLET_HOST:$TARGET_PATH/releases/$RELEASE_NAME/easyinventory-site.zip"
+          ssh -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new "$DROPLET_USER@$DROPLET_HOST" "cd \"$TARGET_PATH/releases/$RELEASE_NAME\" && rm -rf site && python3 -m zipfile -e easyinventory-site.zip site && ln -sfn \"$TARGET_PATH/releases/$RELEASE_NAME/site\" \"$TARGET_PATH/current\""
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/droplet_key
