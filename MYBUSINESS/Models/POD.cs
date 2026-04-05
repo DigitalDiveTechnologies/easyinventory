@@ -14,7 +14,7 @@ namespace MYBUSINESS.Models
     
     public partial class POD
     {
-        public decimal Auto { get; set; }
+        public long Auto { get; set; }
         public string POId { get; set; }
         public Nullable<int> PODId { get; set; }
         public Nullable<int> ProductId { get; set; }

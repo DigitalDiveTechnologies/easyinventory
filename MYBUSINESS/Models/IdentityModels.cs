@@ -1,4 +1,4 @@
-﻿using System.Data.Entity;
+using System.Data.Entity;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNet.Identity;
@@ -30,8 +30,11 @@ namespace MYBUSINESS.Models
             return new ApplicationDbContext();
         }
 
-        public System.Data.Entity.DbSet<MYBUSINESS.Models.SO> SOes { get; set; }
-
-        public System.Data.Entity.DbSet<MYBUSINESS.Models.Customer> Customers { get; set; }
+        protected override void OnModelCreating(DbModelBuilder modelBuilder)
+        {
+            // Keep ASP.NET Identity on PostgreSQL's default schema so it matches the Neon database.
+            modelBuilder.HasDefaultSchema("public");
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

@@ -14,7 +14,7 @@ namespace MYBUSINESS.Models
     
     public partial class SOD
     {
-        public decimal Auto { get; set; }
+        public long Auto { get; set; }
         public string SOId { get; set; }
         public Nullable<int> SODId { get; set; }
         public Nullable<int> ProductId { get; set; }
