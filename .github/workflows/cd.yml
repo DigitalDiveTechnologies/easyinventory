@@ -13,29 +13,29 @@ permissions:
 
 jobs:
   package:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
 
-      - name: Restore NuGet packages
-        run: msbuild MYBUSINESS.sln -t:Restore -p:RestorePackagesConfig=true
-
-      - name: Build solution
-        run: msbuild MYBUSINESS.sln -p:Configuration=Release -p:Platform="Any CPU" -m
-
-      - name: Create deployment package
-        shell: powershell
-        run: powershell -ExecutionPolicy Bypass -File .\.github\scripts\package-site.ps1
+      - name: Publish and zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore EasyInventory.sln
+          dotnet publish ShopOn.Web/ShopOn.Web.csproj -c Release -o artifacts/publish --no-restore
+          cd artifacts && zip -r easyinventory-site.zip publish
 
       - name: Upload deployment artifacts
         uses: actions/upload-artifact@v4
         with:
           name: easyinventory-site-package
-          path: artifacts
+          path: artifacts/easyinventory-site.zip
           if-no-files-found: error
           retention-days: 14

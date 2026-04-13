@@ -420,11 +420,9 @@ FodyWeavers.xsd
 # Built Visual Studio Code Extensions
 *.vsix
 
-# Local Neon / tooling (may contain secrets); EF6.Npgsql source clone; duplicate vendor tree
+# Local Neon / tooling (may contain secrets)
 .neon
 .neon/
-tmp-EntityFramework6.Npgsql/
-Inventory Management System - C# ASP.Net MVC - Complete Source Code-offline - Copy/
 
 # Windows Installer files from build outputs
 *.cab

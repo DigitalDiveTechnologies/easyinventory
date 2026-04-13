@@ -18,17 +18,19 @@ permissions:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
 
-      - name: Restore NuGet packages
-        run: msbuild MYBUSINESS.sln -t:Restore -p:RestorePackagesConfig=true
+      - name: Restore
+        run: dotnet restore EasyInventory.sln
 
-      - name: Build solution
-        run: msbuild MYBUSINESS.sln -p:Configuration=Release -p:Platform="Any CPU" -m
+      - name: Build
+        run: dotnet build EasyInventory.sln -c Release --no-restore

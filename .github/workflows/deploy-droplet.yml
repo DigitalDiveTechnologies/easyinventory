@@ -13,24 +13,24 @@ permissions:
 
 jobs:
   package:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v2
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "8.0.x"
 
-      - name: Restore NuGet packages
-        run: msbuild MYBUSINESS.sln -t:Restore -p:RestorePackagesConfig=true
-
-      - name: Build solution
-        run: msbuild MYBUSINESS.sln -p:Configuration=Release -p:Platform="Any CPU" -m
-
-      - name: Create deployment package
-        shell: powershell
-        run: powershell -ExecutionPolicy Bypass -File .\.github\scripts\package-site.ps1
+      - name: Publish and zip
+        shell: bash
+        run: |
+          set -euo pipefail
+          dotnet restore EasyInventory.sln
+          dotnet publish ShopOn.Web/ShopOn.Web.csproj -c Release -o artifacts/publish --no-restore
+          cd artifacts && zip -r easyinventory-site.zip publish
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
@@ -73,7 +73,7 @@ jobs:
           RELEASE_NAME="${GITHUB_SHA}"
           ssh -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new "$DROPLET_USER@$DROPLET_HOST" "mkdir -p \"$TARGET_PATH/releases/$RELEASE_NAME\""
           scp -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new artifacts/easyinventory-site.zip "$DROPLET_USER@$DROPLET_HOST:$TARGET_PATH/releases/$RELEASE_NAME/easyinventory-site.zip"
-          ssh -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new "$DROPLET_USER@$DROPLET_HOST" "cd \"$TARGET_PATH/releases/$RELEASE_NAME\" && rm -rf site && python3 -m zipfile -e easyinventory-site.zip site && ln -sfn \"$TARGET_PATH/releases/$RELEASE_NAME/site\" \"$TARGET_PATH/current\""
+          ssh -i ~/.ssh/droplet_key -o StrictHostKeyChecking=accept-new "$DROPLET_USER@$DROPLET_HOST" "cd \"$TARGET_PATH/releases/$RELEASE_NAME\" && rm -rf site && python3 -m zipfile -e easyinventory-site.zip site && ln -sfn \"$TARGET_PATH/releases/$RELEASE_NAME/site/publish\" \"$TARGET_PATH/current\""
 
       - name: Cleanup SSH key
         if: always()

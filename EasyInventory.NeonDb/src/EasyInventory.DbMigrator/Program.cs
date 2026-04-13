@@ -63,5 +63,5 @@ db.Employees.Add(new Employee
     IsActive = 1
 });
 await db.SaveChangesAsync();
-Console.WriteLine($"Created {login}. Password: {plainPassword} (same TripleDES + key as MYBUSINESS UserManagement).");
+Console.WriteLine($"Created {login}. Password: {plainPassword} (same TripleDES + key as ShopOn.Web UserManagement).");
 return 0;

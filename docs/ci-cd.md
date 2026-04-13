@@ -1,9 +1,9 @@
 # CI/CD for easyinventory
 
-This repository now includes two GitHub Actions workflows for the ASP.NET MVC 5 / .NET Framework 4.8 application:
+GitHub Actions build and package the **ASP.NET Core 8** app (`ShopOn.Web`) against **Neon PostgreSQL** (`EasyInventory.PgData`).
 
-- `CI` validates the solution on every push and pull request targeting `dev`, `main`, or `master`.
-- `CD` builds a deployable site package zip and uploads it as a workflow artifact on every push to `dev`, `main`, or `master`, and on manual runs.
+- **CI** validates `EasyInventory.sln` on push/PR to `dev`, `main`, or `master`.
+- **CD** publishes `ShopOn.Web` and uploads `easyinventory-site.zip` as an artifact on push to those branches (and manual runs).
 
 ## Workflows
 
@@ -11,48 +11,36 @@ This repository now includes two GitHub Actions workflows for the ASP.NET MVC 5 
 
 File: `.github/workflows/ci.yml`
 
-Steps:
-
 1. Check out the repository.
-2. Restore NuGet packages with MSBuild.
-3. Build `MYBUSINESS.sln` in `Release` configuration.
+2. Set up .NET 8 SDK.
+3. `dotnet restore` / `dotnet build` on `EasyInventory.sln` (Release).
 
 ### CD
 
 File: `.github/workflows/cd.yml`
 
-Steps:
-
 1. Check out the repository.
-2. Restore NuGet packages with MSBuild.
-3. Build the solution in `Release` configuration.
-4. Stage the runtime site files with `.github/scripts/package-site.ps1`.
-5. Upload the package as the `easyinventory-site-package` artifact.
+2. Set up .NET 8 SDK.
+3. `dotnet publish ShopOn.Web` to `artifacts/publish`, then zip as `artifacts/easyinventory-site.zip`.
+4. Upload the zip as the `easyinventory-site-package` artifact.
 
-The artifact folder contains the generated deployment zip at `artifacts/easyinventory-site.zip`.
+For a **Windows-local** package matching CI output, run:
+
+`powershell -ExecutionPolicy Bypass -File .\.github\scripts\package-site.ps1`
 
 ## Important repo-specific note
 
-Inventory data is expected to live in **Neon PostgreSQL** (connection strings / `EasyInventory.PgData`), not local `.mdf` / SQLite files. The CD script stages static site assets from `MYBUSINESS` via robocopy; it does not bundle any database files.
+Inventory data lives in **Neon PostgreSQL**. Connection strings belong in `ShopOn.Web` configuration (e.g. `appsettings.Development.json` or environment variables), not committed secrets.
 
-The CD workflow packages the existing runtime files from disk instead of relying on the project file's full content manifest, because the repository currently contains many stale content entries that do not exist on disk and would otherwise break packaging.
+The deployment zip is the **framework-dependent publish output** of `ShopOn.Web` (DLLs, `wwwroot`, `web.config` for IIS if generated), suitable for `dotnet ShopOn.Web.dll` or IIS/Kestrel hosting.
 
-**Solutions:** `EasyInventory.sln` groups the revamp (`ShopOn.Web`, `EasyInventory.PgData`, `EasyInventory.DbMigrator`) and builds with `dotnet build`. `MYBUSINESS.sln` is the full tree including legacy `MYBUSINESS` and is what CI uses (MSBuild on Windows). `ShopOn.Web.sln` and `EasyInventory.NeonDb\EasyInventory.NeonDb.sln` are narrower entry points for the same projects.
+**Solution:** open **`EasyInventory.sln`** at the repo root (contains `ShopOn.Web`, `EasyInventory.PgData`, `EasyInventory.DbMigrator`).
 
 ## What this gives you today
 
-- Continuous integration for restore and build validation.
-- Continuous delivery of a deployment-ready package artifact from GitHub Actions.
+- CI build validation on Linux runners (no MSBuild/WebApplication.targets required).
+- CD artifact: published Core app as a zip.
 
 ## Next deployment step
 
-This setup intentionally stops at a portable package artifact because the target hosting platform was not defined yet.
-
-You can take the generated `easyinventory-site.zip` and deploy it to:
-
-- IIS by extracting the site package to the target application directory
-- Azure App Service
-- Octopus Deploy
-- Any release process that accepts a site-content zip artifact
-
-If you want, the next step can be wiring this artifact into automatic deployment for your exact target environment.
+Use `easyinventory-site.zip` on a server with the **.NET 8 runtime** (or use **self-contained** publish if you change the publish profile). `deploy-droplet.yml` uploads the same artifact for SSH-based releases.
