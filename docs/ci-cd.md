@@ -33,14 +33,11 @@ The artifact folder contains the generated deployment zip at `artifacts/easyinve
 
 ## Important repo-specific note
 
-The project was referencing LocalDB files as if they already lived inside `MYBUSINESS/App_Data`, while the tracked database files are actually stored at the repository root:
+Inventory data is expected to live in **Neon PostgreSQL** (connection strings / `EasyInventory.PgData`), not local `.mdf` / SQLite files. The CD script stages static site assets from `MYBUSINESS` via robocopy; it does not bundle any database files.
 
-- `bmsFresh.mdf`
-- `bmsFresh_log.ldf`
+The CD workflow packages the existing runtime files from disk instead of relying on the project file's full content manifest, because the repository currently contains many stale content entries that do not exist on disk and would otherwise break packaging.
 
-The project file now links those root files into `App_Data` during packaging so local publish scenarios stay aligned with the repository layout.
-
-The CD workflow itself packages the existing runtime files from disk instead of relying on the project file's full content manifest, because the repository currently contains many stale content entries that do not exist on disk and would otherwise break packaging.
+**Solutions:** `EasyInventory.sln` groups the revamp (`ShopOn.Web`, `EasyInventory.PgData`, `EasyInventory.DbMigrator`) and builds with `dotnet build`. `MYBUSINESS.sln` is the full tree including legacy `MYBUSINESS` and is what CI uses (MSBuild on Windows). `ShopOn.Web.sln` and `EasyInventory.NeonDb\EasyInventory.NeonDb.sln` are narrower entry points for the same projects.
 
 ## What this gives you today
 

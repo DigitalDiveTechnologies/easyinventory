@@ -1,0 +1,188 @@
+@{
+    ViewBag.Title = "Sign in";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>@ViewBag.Title - BiznisHike ShopON</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <!-- Bootstrap 3 (required by AdminLTE for forms, grid, buttons) -->
+    <link rel="stylesheet" href="~/Content/bootstrap.min.css">
+    <link rel="stylesheet" href="~/bower_components/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/dist/css/AdminLTE.min.css">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <style>
+        html, body.login-page {
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        body.login-page {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 20px;
+            background: linear-gradient(155deg, #1a3a52 0%, #2c6b8a 42%, #4a9d9a 100%);
+            font-family: 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif;
+        }
+
+        .login-box {
+            width: 100%;
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .login-logo {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .login-logo a {
+            color: #fff;
+            text-decoration: none;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        }
+
+        .login-logo a:hover,
+        .login-logo a:focus {
+            color: #e8f4fc;
+            text-decoration: none;
+        }
+
+        .login-logo a b {
+            font-weight: 600;
+        }
+
+        .login-box-body {
+            background: #fff;
+            padding: 2rem 2.25rem 2.25rem;
+            border-radius: 14px;
+            color: #444;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.12);
+            border: 1px solid rgba(255, 255, 255, 0.35);
+        }
+
+        .login-box-msg {
+            text-align: center;
+            margin: 0 0 1.5rem;
+            font-size: 1.05rem;
+            color: #5a6c7d;
+            font-weight: 400;
+        }
+
+        .login-page .form-group.has-feedback {
+            margin-bottom: 1.1rem;
+        }
+
+        .login-page .form-control {
+            height: 46px;
+            border-radius: 9px;
+            padding: 10px 14px;
+            font-size: 15px;
+            border: 1px solid #cfd8dc;
+            box-shadow: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .login-page .form-control:focus {
+            border-color: #3c8dbc;
+            box-shadow: 0 0 0 3px rgba(60, 141, 188, 0.22);
+        }
+
+        .login-page .has-feedback .form-control {
+            padding-right: 44px;
+        }
+
+        .login-page .form-control-feedback {
+            height: 46px;
+            line-height: 46px;
+            width: 44px;
+            color: #90a4ae;
+        }
+
+        .login-page .btn-primary.btn-block {
+            height: 48px;
+            margin-top: 0.5rem;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 0.03em;
+            text-transform: none;
+            border: none;
+            background: linear-gradient(180deg, #3c8dbc 0%, #2c6e8c 100%);
+            box-shadow: 0 4px 14px rgba(44, 110, 140, 0.45);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+        }
+
+        .login-page .btn-primary.btn-block:hover,
+        .login-page .btn-primary.btn-block:focus {
+            background: #2c6e8c;
+            box-shadow: 0 6px 18px rgba(44, 110, 140, 0.5);
+        }
+
+        .login-page .btn-primary.btn-block:active {
+            transform: translateY(1px);
+        }
+
+        .login-page .alert-danger {
+            border-radius: 9px;
+            border: none;
+            margin-bottom: 1.25rem;
+            text-align: center;
+        }
+
+        @@media (max-width: 480px) {
+            .login-box-body {
+                padding: 1.5rem 1.25rem 1.75rem;
+            }
+            .login-logo {
+                font-size: 1.65rem;
+            }
+        }
+    </style>
+</head>
+<body class="hold-transition login-page">
+<div class="login-box">
+    <div class="login-logo">
+        <a href="@Url.Content("~/")"><b>BiznisHike</b> ShopON</a>
+    </div>
+    <div class="login-box-body">
+        <p class="login-box-msg">Sign in to start your session</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger">@ViewBag.Error</div>
+        }
+
+        @using (Html.BeginForm("Login", "UserManagement", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="form-group has-feedback">
+                <input type="text" class="form-control" placeholder="Login" id="Login" name="Login" autocomplete="username" required autofocus />
+                <span class="fa fa-user form-control-feedback"></span>
+            </div>
+            <div class="form-group has-feedback">
+                <input type="password" class="form-control" placeholder="Password" id="Password" name="Password" autocomplete="current-password" required />
+                <span class="fa fa-lock form-control-feedback"></span>
+            </div>
+            <div class="row">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+<script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

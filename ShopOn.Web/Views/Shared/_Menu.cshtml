@@ -1,0 +1,8 @@
+@* Legacy rights-driven menu not migrated; show logged-in user link when present. *@
+@if (ViewBag.CurrentUser != null)
+{
+    var user = (EasyInventory.PgData.Entities.Employee)ViewBag.CurrentUser;
+    <li style="font-weight:bold; color:white">
+        <a asp-controller="Dashboard" asp-action="Index">@(user.FirstName) @(user.LastName)</a>
+    </li>
+}

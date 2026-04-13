@@ -16,7 +16,6 @@ if (-not (Test-Path $projectPath)) {
 
 Remove-Item -Recurse -Force $stagingPath -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force -Path $stagingPath | Out-Null
-New-Item -ItemType Directory -Force -Path (Join-Path $stagingPath "App_Data") | Out-Null
 
 $robocopyArgs = @(
     $projectPath
@@ -30,18 +29,6 @@ robocopy @robocopyArgs | Out-Host
 
 if ($LASTEXITCODE -gt 7) {
     throw "robocopy failed with exit code $LASTEXITCODE."
-}
-
-$rootDatabaseFiles = @(
-    "bmsFresh.mdf",
-    "bmsFresh_log.ldf"
-)
-
-foreach ($databaseFile in $rootDatabaseFiles) {
-    $sourcePath = Join-Path (Get-Location) $databaseFile
-    if (Test-Path $sourcePath) {
-        Copy-Item -Path $sourcePath -Destination (Join-Path $stagingPath "App_Data") -Force
-    }
 }
 
 if (Test-Path $zipPath) {

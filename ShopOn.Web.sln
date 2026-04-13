@@ -1,0 +1,29 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShopOn.Web", "ShopOn.Web\ShopOn.Web.csproj", "{A3A8B9FC-CBEE-4207-A128-14B6506A234D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyInventory.PgData", "EasyInventory.NeonDb\src\EasyInventory.PgData\EasyInventory.PgData.csproj", "{FFD31D94-2B7B-49F2-92BE-56988EED63C1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyInventory.DbMigrator", "EasyInventory.NeonDb\src\EasyInventory.DbMigrator\EasyInventory.DbMigrator.csproj", "{B2C3D4E5-F6A7-8901-BCDE-F12345678901}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A3A8B9FC-CBEE-4207-A128-14B6506A234D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3A8B9FC-CBEE-4207-A128-14B6506A234D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3A8B9FC-CBEE-4207-A128-14B6506A234D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3A8B9FC-CBEE-4207-A128-14B6506A234D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFD31D94-2B7B-49F2-92BE-56988EED63C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFD31D94-2B7B-49F2-92BE-56988EED63C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFD31D94-2B7B-49F2-92BE-56988EED63C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFD31D94-2B7B-49F2-92BE-56988EED63C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B2C3D4E5-F6A7-8901-BCDE-F12345678901}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
