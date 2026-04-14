@@ -46,11 +46,11 @@ namespace ShopOn.Web.Controllers
         // GET: Customers/Create
         public IActionResult Create()
         {
-            //int maxId = _db.Customers.Max(p => p.Id);
-            int maxId = _db.Customers.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id);
-            maxId += 1;
-            ViewBag.SuggestedNewCustId = maxId;
-            return View();
+            return View(new Customer
+            {
+                Id = GetNextCustomerId(),
+                Balance = 0
+            });
         }
 
         // POST: Customers/Create
@@ -80,8 +80,22 @@ namespace ShopOn.Web.Controllers
             //{
             //    return View(customer);
             //}
-            
+            if (customer.Id == 0)
+            {
+                customer.Id = GetNextCustomerId();
+            }
+
+            if (customer.Balance == null)
+            {
+                customer.Balance = 0;
+            }
+
             return View(customer);
+        }
+
+        private int GetNextCustomerId()
+        {
+            return _db.Customers.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id) + 1;
         }
 
         // GET: Customers/Edit/5

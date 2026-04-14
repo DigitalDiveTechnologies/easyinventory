@@ -14,29 +14,22 @@
 @*<link href="@Url.Content("~/Content/custom/custom.css")" rel="stylesheet" type="text/css" />*@
 <script src="~/Content/custom/supplierPOPR.js"></script>
 <script src="~/Content/custom/downloads/jquery.mcautocomplete.js"></script>
-<!-- Content Wrapper. Contains page content -->
-<div class="content-wrapper">
-    <section class="content">
-        <div class="row">
-            <!-- left column -->
-            <div class="col-md-6">
-                <!-- general form elements -->
-                <div class="box box-primary">
-                    <div class="box-header with-border">
-                        <h3 class="box-title">Create New Product</h3>
-                    </div>
-                    @using (Html.BeginForm())
-                    {
-                        @Html.AntiForgeryToken()
-                        <form role="form">
-                            <div class="box-body">
+<div class="sp-page">
+    <section class="sp-panel sp-form-card">
+        <div class="inventory-toolbar">
+            <p class="sp-panel__title">Create New Product</p>
+        </div>
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+            <div class="box-body">
 
 
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.Id, htmlAttributes: new { @class = "control-label" })
 
-                                    @Html.EditorFor(model => model.Id, new { htmlAttributes = new { @class = "form-control", @Value = ViewBag.SuggestedId, @readonly = "readonly" } })
+                                    @Html.EditorFor(model => model.Id, new { htmlAttributes = new { @class = "form-control", @readonly = "readonly" } })
                                     @Html.ValidationMessageFor(model => model.Id, "", new { @class = "text-danger" })
 
                                 </div>
@@ -81,7 +74,7 @@
                                 <div class="form-group">
                                     @Html.LabelFor(model => model.Stock, htmlAttributes: new { @class = "control-label" })
 
-                                    @Html.EditorFor(model => model.Stock, new { htmlAttributes = new { @class = "form-control", @id = "stock",@readonly = "readonly" } })
+                                    @Html.EditorFor(model => model.Stock, new { htmlAttributes = new { @class = "form-control", @id = "stock" } })
                                     @Html.ValidationMessageFor(model => model.Stock, "", new { @class = "text-danger" })
 
                                 </div>
@@ -110,19 +103,13 @@
 
                                 </div>
 
-                            </div>
-
-                            <div class="box-footer">
-                                <input type="submit" value="Create" id="CreateProduct" class="btn btn-primary" />
-                                @Html.ActionLink("Back to List", "Index")
-                            </div>
-
-
-                        </form>
-                    }
-                </div>
             </div>
-        </div>
+
+            <div class="box-footer">
+                <input type="submit" value="Create" id="CreateProduct" class="btn btn-primary" />
+                @Html.ActionLink("Back to List", "Index")
+            </div>
+        }
     </section>
 </div>
 

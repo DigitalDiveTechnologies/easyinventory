@@ -46,10 +46,11 @@ namespace ShopOn.Web.Controllers
         // GET: Suppliers/Create
         public IActionResult Create()
         {
-            int maxId = _db.Suppliers.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id);
-            maxId += 1;
-            ViewBag.SuggestedNewSuppId = maxId;
-            return View();
+            return View(new Supplier
+            {
+                Id = GetNextSupplierId(),
+                Balance = 0
+            });
         }
 
         // POST: Suppliers/Create
@@ -70,7 +71,22 @@ namespace ShopOn.Web.Controllers
                 return RedirectToAction("Index");
             }
 
+            if (supplier.Id == 0)
+            {
+                supplier.Id = GetNextSupplierId();
+            }
+
+            if (supplier.Balance == null)
+            {
+                supplier.Balance = 0;
+            }
+
             return View(supplier);
+        }
+
+        private int GetNextSupplierId()
+        {
+            return _db.Suppliers.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id) + 1;
         }
 
         // GET: Suppliers/Edit/5

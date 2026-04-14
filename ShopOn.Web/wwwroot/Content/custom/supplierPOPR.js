@@ -1,4 +1,4 @@
-﻿var productColumns = [{ name: 'Id', minWidth: '100px' }, { name: 'Product', minWidth: '320px' }, { name: 'Purch. Price', minWidth: '100px' }, { name: 'Stock', minWidth: '70px' }, { name: 'PerPack', minWidth: '70px' }];
+﻿var productColumns = [{ name: 'Id', minWidth: '100px' }, { name: 'Product', minWidth: '320px' }, { name: 'Purchase Price', minWidth: '120px' }, { name: 'Stock', minWidth: '70px' }, { name: 'Per Pack', minWidth: '80px' }];
 //var products = []; //[['Ciplet', '10', '60'], ['Gaviscon', '85', '12'], ['Surficol', '110', '8']];
 var products = new Array();
 
@@ -88,6 +88,9 @@ $(document).ready(function () {
 
     //alert('iam ready');
     document.getElementById('supplier').focus();
+    OnTypeName('#name0');
+    TriggerBodyEvents();
+    update_itemTotal();
 
     //$('#name').tooltip('show')
 
@@ -121,7 +124,7 @@ $(document).ready(function () {
             '<td style="display:none;"><input type="hidden" name="PurchaseOrderDetail.Index" value="' + txtSerialNum + '" /></td>' +
             '<td style="display:none;"><input type="text" readonly class="form-control classBGcolor" name="PurchaseOrderDetail[' + txtSerialNum + '].ProductId" id="idn' + txtSerialNum + '"></td>' +
             '<td><input type="text" class="form-control" autocomplete="off" name="name' + txtSerialNum + '" id="name' + txtSerialNum + '"></td>' +
-            '<td><input type="text"  class="form-control autocomplete="off" classBGcolor" name="PurchaseOrderDetail[' + txtSerialNum + '].PurchasePrice" id="purchasePrice' + txtSerialNum + '"></td>' +
+            '<td><input type="text" class="form-control classBGcolor" autocomplete="off" name="PurchaseOrderDetail[' + txtSerialNum + '].PurchasePrice" id="purchasePrice' + txtSerialNum + '"></td>' +
             '<td><input type="text" class="form-control" autocomplete="off" name="PurchaseOrderDetail[' + txtSerialNum + '].Quantity" id="quantity' + txtSerialNum + '"></td>' +
             '<td><select class="form-control" name="PurchaseOrderDetail[' + txtSerialNum + '].IsPack" id="isPack' + txtSerialNum + '"><option value="false">Piece</option><option value="true" selected>Pack</option></select></td>' +
             '<td><input type="text" class="form-control" readonly autocomplete="off" name="PurchaseOrderDetail[' + txtSerialNum + '].PerPack" id="perPack' + txtSerialNum + '"></td>' +
@@ -372,10 +375,10 @@ function TriggerBodyEvents() {
     //alert('#name' + txtSerialNum);
     OnTypeName('#name' + txtSerialNum);
 
-    $('#quantity' + txtSerialNum).keyup(function () {
+    $('#quantity' + txtSerialNum).on('input change keyup', function () {
         update_itemTotal();
     });
-    $('#purchasePrice' + txtSerialNum).keyup(function () {
+    $('#purchasePrice' + txtSerialNum).on('input change keyup', function () {
         update_itemTotal();
     });
     //$('#delete' + txtSerialNum).keyup(function () {
@@ -428,7 +431,7 @@ function TriggerBodyEvents() {
         //}
         update_itemTotal();
     });
-    $('#perPack' + txtSerialNum).keyup(function () {
+    $('#perPack' + txtSerialNum).on('input change keyup', function () {
         //var end = this.value;
         //var firstDropVal = $('#saleType').val();
         update_itemTotal();
@@ -514,9 +517,9 @@ function update_itemTotal() {
             if (!(qty)) { qty = 0; }
             price = $(this).find("[id^='purchasePrice']").val();
             
-            var itemAmount = (qty * price);
+            var itemAmount = (parseFloat(qty) || 0) * (parseFloat(price) || 0);
             if ($(this).find("[id^='isPack']").val() == "true") {//false=item true=PerPack
-                itemAmount = itemAmount * $(this).find("[id^='perPack']").val();
+                itemAmount = itemAmount * (parseFloat($(this).find("[id^='perPack']").val()) || 0);
                 orderQty += parseInt(qty);
             }
             else {
@@ -530,9 +533,9 @@ function update_itemTotal() {
             if (!(qty)) { qty = 0; }
             price = $(this).find("[id^='purchasePrice']").val();
             
-            var ItemAmount = (qty * price);
+            var ItemAmount = (parseFloat(qty) || 0) * (parseFloat(price) || 0);
             if ($(this).find("[id^='isPack']").val() == "true") {//false=item true=PerPack
-                ItemAmount = ItemAmount * $(this).find("[id^='perPack']").val();
+                ItemAmount = ItemAmount * (parseFloat($(this).find("[id^='perPack']").val()) || 0);
                 returnQty += parseInt(qty);
                 //alert(ItemAmount);
             } else {

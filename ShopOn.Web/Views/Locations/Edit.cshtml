@@ -19,7 +19,6 @@
                     {
                         @Html.AntiForgeryToken()
 
-                        <form role="form">
                             <div class="box-body">
                                 @Html.ValidationSummary(true, "", new { @class = "text-danger" })
                                 @Html.HiddenFor(model => model.Id)
@@ -61,7 +60,6 @@
                                 <input type="submit" value="Update" class="btn btn-primary" />
                                 @Html.ActionLink("Back to List", "Index")
                             </div>
-                        </form>
                     }
                 </div>
             </div>

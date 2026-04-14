@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace ShopOn.Web.Controllers;
 
 [AllowAnonymous]
-public class AccountController : Controller
-{
-    public IActionResult Login(string? returnUrl = null)
+    public class AccountController : Controller
     {
-        return RedirectToAction("Index", "Home");
-    }
+        public IActionResult Login(string? returnUrl = null)
+        {
+            return RedirectToAction("Login", "UserManagement", new { returnUrl });
+        }
 
     public IActionResult Register() => RedirectToAction("Index", "Home");
 

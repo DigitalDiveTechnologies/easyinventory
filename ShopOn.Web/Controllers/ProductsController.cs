@@ -66,12 +66,9 @@ namespace ShopOn.Web.Controllers
         // GET: Products/Create
         public IActionResult Create()
         {
-            //int maxId = _db.Products.Max(p => p.Id);
-            int maxId = _db.Products.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id);
-            maxId += 1;
-            ViewBag.SuggestedId = maxId;
             ViewBag.Suppliers = _db.Suppliers;
             Product prod = new Product();
+            prod.Id = GetNextProductId();
 
             prod.PurchasePrice = 0;
             prod.SalePrice = 0;
@@ -107,24 +104,32 @@ namespace ShopOn.Web.Controllers
                 return RedirectToAction("Index");
             }
             ViewBag.Suppliers = _db.Suppliers;
+            if (product.Id == 0)
+            {
+                product.Id = GetNextProductId();
+            }
             return View(product);
         }
 
-        // GET: Products/Edit/5
-        public IActionResult Edit(decimal id)
+        private int GetNextProductId()
         {
-            if (id == null)
-            {
-                return BadRequest();
-            }
+            return _db.Products.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id) + 1;
+        }
 
+        // GET: Products/Edit/5
+        public IActionResult Edit(int id)
+        {
             Product product = _db.Products.Find(id);
-            product.Stock = product.Stock / product.PerPack;
-            ViewBag.SuppName = product.Supplier.Name;
             if (product == null)
             {
                 return NotFound();
             }
+            if (product.PerPack == null || product.PerPack == 0)
+            {
+                product.PerPack = 1;
+            }
+            product.Stock = product.Stock / product.PerPack;
+            ViewBag.SuppName = product.Supplier?.Name ?? "";
             return View(product);
         }
 

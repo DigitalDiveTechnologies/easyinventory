@@ -32,9 +32,18 @@ namespace ShopOn.Web.Controllers
         //}
         public IActionResult Index(string orderId)
         {
-            return null; //return to create insted
+            if (string.IsNullOrWhiteSpace(orderId))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             orderId = Decode(orderId);
             SO sO = _db.SOes.Where(x => x.Id == orderId).FirstOrDefault();
+            if (sO == null)
+            {
+                return NotFound();
+            }
+
             ViewBag.Customer = sO.Customer.Name;
             ViewBag.OrderNo = sO.SOSerial;
             ViewBag.id = sO.Id;
@@ -89,7 +98,7 @@ namespace ShopOn.Web.Controllers
             if (ModelState.IsValid)
             {
 
-                payment.ReceivedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
+                payment.ReceivedDate = DateTime.UtcNow;
                 payment.SOId = SOId;
                 _db.Payments.Add(payment);
                 ////////////////add to SO table
@@ -101,7 +110,7 @@ namespace ShopOn.Web.Controllers
                 sO.PrevBalance = sO.Customer.Balance; //customer last balnce will go to prev balance
                 sO.Customer.Balance-= payment.PaymentAmount;//minus this amout from total balance also
                 sO.Balance = sO.Customer.Balance;
-                sO.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
+                sO.Date = DateTime.UtcNow;
                 
                 //_db.SOes.Add(sO);
                 _db.Entry(sO).State = EntityState.Modified;
@@ -166,12 +175,12 @@ namespace ShopOn.Web.Controllers
                 sO.PrevBalance = sO.Customer.Balance; //customer last balnce will go to prev balance
                 sO.Customer.Balance -= payment.PaymentAmount;//minus this amout from total balance also
                 sO.Balance = sO.Customer.Balance;
-                sO.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
+                sO.Date = DateTime.UtcNow;
 
 
                 oldPymnt.PaymentAmount = payment.PaymentAmount;
                 oldPymnt.PaymentMethod= payment.PaymentMethod;
-                oldPymnt.ReceivedDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
+                oldPymnt.ReceivedDate = DateTime.UtcNow;
                 oldPymnt.Remarks = payment.Remarks;
 
                 _db.Entry(oldPymnt).State = EntityState.Modified;

@@ -20,7 +20,12 @@
 <link href="~/Content/custom/downloads/datatables.min.css" rel="stylesheet" />
 <script src="~/Content/custom/downloads/datatables.min.js"></script>
 <script src="~/Content/custom/downloads/jquery.mcautocomplete.js"></script>
-<center><h2>Sales</h2></center>
+@{
+    var totalOrders = Model.Count();
+    var totalAmount = Model.Sum(x => x.BillAmount);
+    var totalPaid = Model.Sum(x => x.BillPaid);
+    var totalBalance = Model.Sum(x => x.Balance ?? 0);
+}
 
 @*<h1>@ViewBag.myLog</h1>*@
 
@@ -29,37 +34,52 @@
 @*<p>
         @Html.ActionLink("Create New Sale Order", "Create")
     </p>*@
-<div class="col-sm-1">
-    @*<button type="submit" id="CreateSO" class="btn btn-info add-new"><i class="fa fa-plus"></i>Save & Print</button>*@
-    <a href="/SOSR/Create?IsReturn=false" id="createSOSR" class="btn btn-info "><i class=""></i> New Sale</a>
-</div>
-<form name="registration_form_Product" id='registration_form_Product' class="form-inline">
-    <center>
-        <div class="row">
-            <input type="hidden" name="SaleOrder.CustomerId" id="idnCustomer" value="" />
-            @*@Html.Label("Customer Name", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
-            @*@Html.Editor("custName", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by customer" } })*@
-            <input type="text" autocomplete="off" class="form-control" name="Customer.Name" id="customer" value="" placeholder="Search by customer" data-toggle="tooltip" data-placement="top" title="Search by customer">
-
-            @*@Html.Label("Time", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
-            @Html.Editor("startDate", new { htmlAttributes = new { @class = "form-control datepicker", @id = "datepickerStart", @placeholder = "Start date", @Value = ViewBag.StartDate } })
-
-
-            @*@Html.Label("Time", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
-            @Html.Editor("endDate", new { htmlAttributes = new { @class = "form-control datepicker", @id = "datepickerEnd", @placeholder = "End date", @Value = ViewBag.EndDate } })
-
-            <input type="button" value="Go" id="btnSearch" class="btn btn-info add-new" />
-
-            @*<input type="date" value="Search" id="btnSearch1" class="form-control " />*@
-
+<div class="sp-page">
+    <section class="sp-hero">
+        <div class="sp-hero__icon"><i class="fa fa-shopping-cart"></i></div>
+        <div class="sp-hero__text">
+            <h1 class="sp-hero__title">Sales Orders</h1>
+            <p class="sp-hero__subtitle">Track and manage all sales transactions</p>
         </div>
-    </center>
-</form>
+        <div class="sp-hero__actions">
+            <a href="/SOSR/Create?IsReturn=false" id="createSOSR" class="btn btn-primary"><i class="fa fa-plus"></i> New Sale</a>
+        </div>
+    </section>
 
-@{Html.RenderPartial("_SelectedSOSR", Model); }
+    <div class="sp-stat-grid">
+        <div class="sp-stat-card">
+            <div>
+                <p class="sp-stat-card__label">Total Sales</p>
+                <p class="sp-stat-card__value">$@totalAmount.ToString("0.##")</p>
+            </div>
+            <span class="sp-stat-card__icon"><i class="fa fa-dollar"></i></span>
+        </div>
+        <div class="sp-stat-card">
+            <div>
+                <p class="sp-stat-card__label">Total Orders</p>
+                <p class="sp-stat-card__value">@totalOrders</p>
+            </div>
+            <span class="sp-stat-card__icon"><i class="fa fa-list"></i></span>
+        </div>
+        <div class="sp-stat-card">
+            <div>
+                <p class="sp-stat-card__label">Outstanding Balance</p>
+                <p class="sp-stat-card__value">$@totalBalance.ToString("0.##")</p>
+            </div>
+            <span class="sp-stat-card__icon"><i class="fa fa-warning"></i></span>
+        </div>
+    </div>
+
+    <form name="registration_form_Product" id="registration_form_Product" class="sp-filter">
+        <input type="hidden" name="SaleOrder.CustomerId" id="idnCustomer" value="" />
+        <input type="text" autocomplete="off" class="form-control" name="Customer.Name" id="customer" value="" placeholder="Search by customer" data-toggle="tooltip" data-placement="top" title="Search by customer">
+        @Html.Editor("startDate", new { htmlAttributes = new { @class = "form-control datepicker", @id = "datepickerStart", @placeholder = "Start date", @Value = ViewBag.StartDate } })
+        @Html.Editor("endDate", new { htmlAttributes = new { @class = "form-control datepicker", @id = "datepickerEnd", @placeholder = "End date", @Value = ViewBag.EndDate } })
+        <input type="button" value="Go" id="btnSearch" class="btn btn-info add-new" />
+    </form>
+
+    @{Html.RenderPartial("_SelectedSOSR", Model); }
+</div>
 
 
 <script type="text/javascript">

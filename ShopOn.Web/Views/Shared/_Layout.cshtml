@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@ViewBag.Title - ShopON</title>
+    <title>@ViewBag.Title - StockPulse</title>
 
 
     <!-- Tell the browser to be responsive to screen width -->
@@ -28,6 +28,7 @@
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="~/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="~/css/redesign.css" />
     <!-- Morris chart -->
     @*<link rel="stylesheet" href="~/bower_components/morris.js/morris.css">*@
     <!-- jvectormap -->
@@ -115,7 +116,13 @@
                 <!-- mini logo for sidebar mini 50x50 pixels -->
                 <span class="logo-mini"><b></b></span>
                 <!-- logo for regular state and mobile devices -->
-                <span class="logo-lg"><b>BiznisHike </b>ShopON</span>
+                <span class="logo-lg sp-logo">
+                    <span class="sp-logo__icon"><i class="fa fa-line-chart"></i></span>
+                    <span class="sp-logo__text">
+                        <span class="sp-logo__name">StockPulse</span>
+                        <span class="sp-logo__sub">Inventory Management</span>
+                    </span>
+                </span>
             </a>
             <!-- Header Navbar: style can be found in header.less -->
             <nav class="navbar navbar-static-top">
@@ -130,8 +137,33 @@
                                     //});
                 </script>
 
+                <div class="sp-topbar">
+                    <div class="sp-search">
+                        <i class="fa fa-search"></i>
+                        <input type="text" placeholder="Search..." />
+                    </div>
 
-                <div class="navbar-custom-menu">
+                    <div class="sp-topbar-actions">
+                        @{
+                            var currentUser = ViewBag.CurrentUser as EasyInventory.PgData.Entities.Employee;
+                            var displayName = currentUser?.FirstName ?? currentUser?.Login ?? "Admin User";
+                            var displayEmail = currentUser?.Login ?? "admin@stockpulse.com";
+                            var initials = displayName.Length > 0 ? displayName.Substring(0, 1).ToUpper() : "A";
+                        }
+                        <div class="sp-user">
+                            <div class="sp-user__meta">
+                                <span class="sp-user__name">@displayName</span>
+                                <span class="sp-user__email">@displayEmail</span>
+                            </div>
+                            <span class="sp-avatar">@initials</span>
+                        </div>
+                        <a class="sp-logout" href="@Url.Action("Logout", "UserManagement")">
+                            <i class="fa fa-sign-out"></i> Logout
+                        </a>
+                    </div>
+                </div>
+
+                <div class="navbar-custom-menu" style="display:none;">
                     <ul class="nav navbar-nav">
                         @*<!-- Messages: style can be found in dropdown.less-->
         <li class="dropdown messages-menu">
@@ -381,15 +413,7 @@
             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
         </li>*@
 
-                        @if (ViewBag.CurrentUser != null)
-                        {
-                            EasyInventory.PgData.Entities.Employee user = (EasyInventory.PgData.Entities.Employee)ViewBag.CurrentUser;
-                            @*<li>@Html.ActionLink("Contact", "Contact", "Home")</li>*@
-                            <li><a href=" https://www.myASP.NET/index?r=100971661">Free Hosting</a></li>
-                            <li><a href=" https://www.fiverr.com/waqaslinks">Contact us</a></li>
-                            <li>@Html.ActionLink(user.Login, "Edit", "Employees", new { id = 0 }, null)</li>
-                            <li>@Html.ActionLink("Logout", "Logout", "UserManagement")</li>
-                        }
+                        @* legacy nav hidden by StockPulse topbar *@
                     </ul>
                 </div>
             </nav>
@@ -402,7 +426,7 @@
                 <!-- /.search form -->
                 <!-- sidebar menu: : style can be found in sidebar.less -->
                 <ul class="sidebar-menu" data-widget="tree">
-                    <li class="header">MAIN NAVIGATION</li>
+                    <li class="header">MAIN MENU</li>
                     @*<li><a href="https://adminlte.io/docs"><i class="fa fa-book"></i> <span>Documentation</span></a></li>*@
                     @*<li><a href="/Home/Index"><i class="fa fa-list"></i> <span>Summary</span></a></li>*@
                     @*<li><a href="/ProductionOrder/Create"><i class="fa fa-file-text"></i> <span>New Production Order</span></a></li>*@
@@ -499,7 +523,7 @@
                             </span>
                         </a>
                         <ul class="treeview-menu">
-                            <li><a href="/MyBusinessInfoes/Edit/1"><i class="fa fa-building"></i> <span>My Business Info</span></a></li>
+                            <li><a href="/MyBusinessInfoes"><i class="fa fa-building"></i> <span>My Business Info</span></a></li>
                         </ul>
                     </li>
                     @* MyBusinessInfoes/Edit/5 *@
@@ -545,6 +569,7 @@
             </ul>
         </li>*@
                 </ul>
+                <div class="sp-sidebar-footer">© 2026 StockPulse</div>
             </section>
             <!-- /.sidebar -->
         </aside>
@@ -570,7 +595,7 @@
             <div class="pull-right hidden-xs">
                 @*<b>Version</b> 1.0.0*@
             </div>
-            <strong>Copyright &copy; @DateTime.Now.Year <a href="#">BiznisHike ShopON</a>.</strong> All rights
+            <strong>Copyright &copy; @DateTime.Now.Year <a href="#">StockPulse</a>.</strong> All rights
             reserved.
         </footer>
         <!-- Control Sidebar -->

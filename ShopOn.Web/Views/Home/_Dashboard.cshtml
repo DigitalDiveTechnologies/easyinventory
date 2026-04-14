@@ -24,30 +24,26 @@
         <div class="noScreen">
             <center><h4>@ViewBag.StartDate - @ViewBag.EndDate</h4></center>
         </div>
-        <hr />
 
-        <section class="content">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="box">
-                        <div class="box-header">
-                            <center><h3 class="box-title">Products</h3></center>
-                        </div>
-                        <div class="box-body">
-                            <table class="table table-bordered table-hover" id="PWS">
-                                <thead>
-                                    <tr>
-                                        <th>Product</th>
-                                        <th>Orders Qty</th>
-                                        <th>Orders</th>
-                                        <th>Return Qty</th>
-                                        <th>Returns</th>
-                                        <th>Profit</th>
+        <section class="sp-panel inventory-table-card">
+            <div class="inventory-toolbar">
+                <p class="sp-panel__title">Products</p>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="PWS">
+                    <thead>
+                        <tr>
+                            <th>Product</th>
+                            <th>Orders Qty</th>
+                            <th>Orders</th>
+                            <th>Return Qty</th>
+                            <th>Returns</th>
+                            <th>Profit</th>
 
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
                                         int SOQty = 0;
                                         decimal SOAmnt = 0;
                                         int SRQty = 0;
@@ -165,170 +161,165 @@
 
                                         }
                                     }
-                                </tbody>
-                                <tfoot>
-                                    <tr style="font-weight:bold">
-                                        <td>Total</td>
-                                        <td>@totSOQty</td>
-                                        <td>@totSOAmnt.ToString("0.00")</td>
-                                        <td>@totSRQty</td>
-                                        <td>@totSRAmnt.ToString("0.00")</td>
-                                        <td>@totProfit.ToString("0.00")</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
-                        </div>
-                    </div>
+                    </tbody>
+                    <tfoot>
+                        <tr style="font-weight:bold">
+                            <td>Total</td>
+                            <td>@totSOQty</td>
+                            <td>@totSOAmnt.ToString("0.00")</td>
+                            <td>@totSRQty</td>
+                            <td>@totSRAmnt.ToString("0.00")</td>
+                            <td>@totProfit.ToString("0.00")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </section>
 
-                    @* other table *@
+        <section class="sp-panel inventory-table-card">
+            <div class="inventory-toolbar">
+                <p class="sp-panel__title">Customers</p>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="CWS">
+                    <thead>
+                        <tr>
+                            <th>Customers</th>
+                            <th>Orders Qty</th>
+                            <th>Orders</th>
+                            <th>Return Qty</th>
+                            <th>Returns</th>
+                            <th>Profit</th>
 
-                    <div class="box">
-                        <div class="box-header">
-                            <center><h3 class="box-title">Customers</h3></center>
-                        </div>
-                        <div class="box-body">
-                            <table class="table table-bordered table-hover" id="CWS">
-                                <thead>
-                                    <tr>
-                                        <th>Customers</th>
-                                        <th>Orders Qty</th>
-                                        <th>Orders</th>
-                                        <th>Return Qty</th>
-                                        <th>Returns</th>
-                                        <th>Profit</th>
-
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @{
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
 
 
-                                        totSOAmnt = 0;
-                                        totSRAmnt = 0;
-                                        totSOQty = 0;
-                                        totSRQty = 0;
-                                        totProfit = 0;
-                                        totLoss = 0;
-                                        foreach (var customer in Model.Customers)
+                            totSOAmnt = 0;
+                            totSRAmnt = 0;
+                            totSOQty = 0;
+                            totSRQty = 0;
+                            totProfit = 0;
+                            totLoss = 0;
+                            foreach (var customer in Model.Customers)
+                            {
+                                discount = 0;
+                                profit = 0;
+                                loss = 0;
+                                soDiscount = 0;
+                                srDiscount = 0;
+
+                                SOAmnt = (decimal)customer.SOes.Sum(x => x.SaleOrderAmount);
+                                SOQty = (int)customer.SOes.Sum(x => x.SaleOrderQty);
+                                totSOQty += SOQty;
+                                SRAmnt = (decimal)customer.SOes.Sum(x => x.SaleReturnAmount);
+                                SRQty = (int)customer.SOes.Sum(x => x.SaleReturnQty);
+                                totSRQty += SRQty;
+                                //soDiscount = (decimal)customer.SOes.Sum(x => x.Discount);
+                                //profit = (decimal)(sod.SalePrice * sod.Quantity) - (decimal)(sod.PurchasePrice * sod.Quantity);
+
+                                //var LstSOes = customer.SOes;
+
+                                foreach (EasyInventory.PgData.Entities.SO so in customer.SOes)
+                                {
+                                    foreach (EasyInventory.PgData.Entities.SOD sod in so.SODs)
+                                    {
+                                        if (sod.SaleType == false)//order
                                         {
-                                            discount = 0;
-                                            profit = 0;
-                                            loss = 0;
-                                            soDiscount = 0;
-                                            srDiscount = 0;
+                                            profit += (decimal)(sod.SalePrice * sod.Quantity) - (decimal)(sod.PurchasePrice * sod.Quantity);
 
-                                            SOAmnt = (decimal)customer.SOes.Sum(x => x.SaleOrderAmount);
-                                            SOQty = (int)customer.SOes.Sum(x => x.SaleOrderQty);
-                                            totSOQty += SOQty;
-                                            SRAmnt = (decimal)customer.SOes.Sum(x => x.SaleReturnAmount);
-                                            SRQty = (int)customer.SOes.Sum(x => x.SaleReturnQty);
-                                            totSRQty += SRQty;
-                                            //soDiscount = (decimal)customer.SOes.Sum(x => x.Discount);
-                                            //profit = (decimal)(sod.SalePrice * sod.Quantity) - (decimal)(sod.PurchasePrice * sod.Quantity);
-
-                                            //var LstSOes = customer.SOes;
-
-                                            foreach (EasyInventory.PgData.Entities.SO so in customer.SOes)
+                                            if (sod.SO.Discount > 0 && sod.SO.SaleOrderQty > 0)
                                             {
-                                                foreach (EasyInventory.PgData.Entities.SOD sod in so.SODs)
-                                                {
-                                                    if (sod.SaleType == false)//order
-                                                    {
-                                                        profit += (decimal)(sod.SalePrice * sod.Quantity) - (decimal)(sod.PurchasePrice * sod.Quantity);
-
-                                                        if (sod.SO.Discount > 0 && sod.SO.SaleOrderQty > 0)
-                                                        {
-                                                            perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleOrderQty);
-                                                            soDiscount += (decimal)(perItemDiscount * sod.Quantity);
-                                                        }
-                                                        if (sod.SO.Discount < 0 && sod.SO.SaleOrderQty > 0)
-                                                        {
-                                                            perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleOrderQty);
-                                                            soDiscount -= Math.Abs((decimal)(perItemDiscount * sod.Quantity));
-                                                        }
-                                                    }
-                                                    else//return
-                                                    {
-
-                                                        loss += (decimal)(sod.SalePrice * sod.Quantity) - (decimal)(sod.PurchasePrice * sod.Quantity);
-
-                                                        //if (sod.SO.Discount > 0 && sod.SO.SaleReturnQty > 0)
-                                                        //{
-                                                        //    perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleReturnQty);
-                                                        //    srDiscount += (decimal)(perItemDiscount * sod.Quantity);
-                                                        //}
-
-                                                        //if (sod.SO.Discount < 0 && sod.SO.SaleReturnQty > 0)
-                                                        //{
-                                                        //    perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleReturnQty);
-                                                        //    srDiscount -= Math.Abs((decimal)(perItemDiscount * sod.Quantity));
-                                                        //}
-
-
-                                                    }
-                                                }
-
-
+                                                perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleOrderQty);
+                                                soDiscount += (decimal)(perItemDiscount * sod.Quantity);
                                             }
+                                            if (sod.SO.Discount < 0 && sod.SO.SaleOrderQty > 0)
+                                            {
+                                                perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleOrderQty);
+                                                soDiscount -= Math.Abs((decimal)(perItemDiscount * sod.Quantity));
+                                            }
+                                        }
+                                        else//return
+                                        {
 
-                                            SOAmnt = SOAmnt - soDiscount;
-                                            totSOAmnt += SOAmnt;
-                                            profit = profit - soDiscount;
+                                            loss += (decimal)(sod.SalePrice * sod.Quantity) - (decimal)(sod.PurchasePrice * sod.Quantity);
 
-                                            SRAmnt = SRAmnt + srDiscount;
-                                            totSRAmnt += SRAmnt;
-                                            loss = loss + srDiscount;
-
-                                            //profit = profit - loss;
-                                            totProfit += profit;
-
-
-
-
-                                            <tr>
-                                                <td>
-                                                    @customer.Name
-                                                </td>
-                                                <td>
-                                                    @* order waly *@
-                                                    @SOQty
-                                                </td>
-                                                <td>
-                                                    @SOAmnt.ToString("0.00")
-                                                </td>
-
-                                                <td>
-                                                    @* return waly *@
-                                                    @SRQty
-                                                </td>
-                                                <td>
-                                                    @SRAmnt.ToString("0.00")
-                                                </td>
-                                                <td>
-                                                    @profit.ToString("0.00")
-                                                </td>
-
-                                            </tr>
+                                            //if (sod.SO.Discount > 0 && sod.SO.SaleReturnQty > 0)
+                                            //{
+                                            //    perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleReturnQty);
+                                            //    srDiscount += (decimal)(perItemDiscount * sod.Quantity);
                                             //}
+
+                                            //if (sod.SO.Discount < 0 && sod.SO.SaleReturnQty > 0)
+                                            //{
+                                            //    perItemDiscount = (decimal)(sod.SO.Discount / sod.SO.SaleReturnQty);
+                                            //    srDiscount -= Math.Abs((decimal)(perItemDiscount * sod.Quantity));
+                                            //}
+
 
                                         }
                                     }
-                                </tbody>
-                                <tfoot>
-                                    <tr style="font-weight:bold">
-                                        <td>Total</td>
-                                        <td>@totSOQty</td>
-                                        <td>@totSOAmnt.ToString("0.00")</td>
-                                        <td>@totSRQty</td>
-                                        <td>@totSRAmnt.ToString("0.00")</td>
-                                        <td>@totProfit.ToString("0.00")</td>
-                                    </tr>
-                                </tfoot>
-                            </table>
 
-                        </div>
-                    </div>
-                </div>
+
+                                }
+
+                                SOAmnt = SOAmnt - soDiscount;
+                                totSOAmnt += SOAmnt;
+                                profit = profit - soDiscount;
+
+                                SRAmnt = SRAmnt + srDiscount;
+                                totSRAmnt += SRAmnt;
+                                loss = loss + srDiscount;
+
+                                //profit = profit - loss;
+                                totProfit += profit;
+
+
+
+
+                                <tr>
+                                    <td>
+                                        @customer.Name
+                                    </td>
+                                    <td>
+                                        @* order waly *@
+                                        @SOQty
+                                    </td>
+                                    <td>
+                                        @SOAmnt.ToString("0.00")
+                                    </td>
+
+                                    <td>
+                                        @* return waly *@
+                                        @SRQty
+                                    </td>
+                                    <td>
+                                        @SRAmnt.ToString("0.00")
+                                    </td>
+                                    <td>
+                                        @profit.ToString("0.00")
+                                    </td>
+
+                                </tr>
+                                //}
+
+                            }
+                        }
+                    </tbody>
+                    <tfoot>
+                        <tr style="font-weight:bold">
+                            <td>Total</td>
+                            <td>@totSOQty</td>
+                            <td>@totSOAmnt.ToString("0.00")</td>
+                            <td>@totSRQty</td>
+                            <td>@totSRAmnt.ToString("0.00")</td>
+                            <td>@totProfit.ToString("0.00")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+
             </div>
         </section>
 

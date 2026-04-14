@@ -7,14 +7,12 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@ViewBag.Title - BiznisHike ShopON</title>
+    <title>@ViewBag.Title - StockPulse</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
-    <!-- Bootstrap 3 (required by AdminLTE for forms, grid, buttons) -->
     <link rel="stylesheet" href="~/Content/bootstrap.min.css">
     <link rel="stylesheet" href="~/bower_components/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="~/dist/css/AdminLTE.min.css">
-
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
 
     <style>
@@ -25,161 +23,365 @@
 
         body.login-page {
             display: flex;
-            align-items: center;
+            align-items: stretch;
             justify-content: center;
-            padding: 32px 20px;
-            background: linear-gradient(155deg, #1a3a52 0%, #2c6b8a 42%, #4a9d9a 100%);
+            background: #ffffff;
             font-family: 'Source Sans Pro', 'Segoe UI', system-ui, sans-serif;
         }
 
-        .login-box {
+        .stockpulse-auth {
+            display: flex;
             width: 100%;
-            max-width: 420px;
+            min-height: 100vh;
+        }
+
+        .stockpulse-auth__brand {
+            flex: 1 1 55%;
+            padding: 70px 64px;
+            color: #fff;
+            background: linear-gradient(180deg, #ffb088 0%, #ff8a4c 100%);
+        }
+
+        .stockpulse-auth__brand-inner {
+            max-width: 520px;
             margin: 0 auto;
         }
 
-        .login-logo {
-            font-size: 2rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            font-weight: 300;
+        .stockpulse-brand {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 36px;
         }
 
-        .login-logo a {
-            color: #fff;
-            text-decoration: none;
-            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-        }
-
-        .login-logo a:hover,
-        .login-logo a:focus {
-            color: #e8f4fc;
-            text-decoration: none;
-        }
-
-        .login-logo a b {
-            font-weight: 600;
-        }
-
-        .login-box-body {
-            background: #fff;
-            padding: 2rem 2.25rem 2.25rem;
+        .stockpulse-brand__icon {
+            width: 54px;
+            height: 54px;
             border-radius: 14px;
-            color: #444;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.12);
-            border: 1px solid rgba(255, 255, 255, 0.35);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+            font-size: 26px;
         }
 
-        .login-box-msg {
-            text-align: center;
-            margin: 0 0 1.5rem;
-            font-size: 1.05rem;
-            color: #5a6c7d;
-            font-weight: 400;
+        .stockpulse-brand__name {
+            font-size: 26px;
+            font-weight: 700;
+            margin: 0;
         }
 
-        .login-page .form-group.has-feedback {
-            margin-bottom: 1.1rem;
+        .stockpulse-brand__tagline {
+            margin: 4px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
         }
 
-        .login-page .form-control {
-            height: 46px;
-            border-radius: 9px;
-            padding: 10px 14px;
+        .stockpulse-auth__headline {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 16px 0 12px;
+        }
+
+        .stockpulse-auth__subhead {
             font-size: 15px;
-            border: 1px solid #cfd8dc;
-            box-shadow: none;
-            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+            line-height: 1.6;
+            max-width: 440px;
+            opacity: 0.95;
         }
 
-        .login-page .form-control:focus {
-            border-color: #3c8dbc;
-            box-shadow: 0 0 0 3px rgba(60, 141, 188, 0.22);
+        .stockpulse-feature {
+            margin-top: 26px;
+            padding: 18px 18px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.18);
+            border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        .login-page .has-feedback .form-control {
-            padding-right: 44px;
+        .stockpulse-feature + .stockpulse-feature {
+            margin-top: 14px;
         }
 
-        .login-page .form-control-feedback {
-            height: 46px;
-            line-height: 46px;
+        .stockpulse-feature__row {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .stockpulse-feature__icon {
             width: 44px;
-            color: #90a4ae;
+            height: 44px;
+            border-radius: 12px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.25);
+            font-size: 18px;
         }
 
-        .login-page .btn-primary.btn-block {
-            height: 48px;
-            margin-top: 0.5rem;
-            border-radius: 9px;
-            font-size: 16px;
+        .stockpulse-feature__title {
+            margin: 0;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .stockpulse-feature__desc {
+            margin: 4px 0 0;
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .stockpulse-auth__form {
+            flex: 1 1 45%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 70px 48px;
+            background: #f8fafc;
+        }
+
+        .stockpulse-card {
+            width: 100%;
+            max-width: 420px;
+            background: #fff;
+            border-radius: 20px;
+            padding: 32px 30px;
+            box-shadow: 0 24px 60px rgba(15, 23, 42, 0.16);
+            border: 1px solid #eef2f7;
+        }
+
+        .stockpulse-card h2 {
+            margin: 0 0 6px;
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .stockpulse-card p {
+            margin: 0 0 18px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stockpulse-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+
+        .stockpulse-input {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .stockpulse-input .form-control {
+            height: 46px;
+            border-radius: 10px;
+            padding-left: 38px;
+            border: 1px solid #e2e8f0;
+            box-shadow: none;
+        }
+
+        .stockpulse-input .form-control:focus {
+            border-color: #ff8a4c;
+            box-shadow: 0 0 0 3px rgba(255, 138, 76, 0.15);
+        }
+
+        .stockpulse-input__icon {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .stockpulse-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 12px 0 18px;
+        }
+
+        .stockpulse-row label {
+            font-size: 12px;
+            color: #475569;
+            margin: 0;
             font-weight: 600;
-            letter-spacing: 0.03em;
-            text-transform: none;
-            border: none;
-            background: linear-gradient(180deg, #3c8dbc 0%, #2c6e8c 100%);
-            box-shadow: 0 4px 14px rgba(44, 110, 140, 0.45);
-            transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
         }
 
-        .login-page .btn-primary.btn-block:hover,
-        .login-page .btn-primary.btn-block:focus {
-            background: #2c6e8c;
-            box-shadow: 0 6px 18px rgba(44, 110, 140, 0.5);
+        .stockpulse-link {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ff8a4c;
+            text-decoration: none;
         }
 
-        .login-page .btn-primary.btn-block:active {
-            transform: translateY(1px);
+        .stockpulse-link:hover,
+        .stockpulse-link:focus {
+            color: #f97316;
+            text-decoration: none;
         }
 
-        .login-page .alert-danger {
-            border-radius: 9px;
-            border: none;
-            margin-bottom: 1.25rem;
+        .stockpulse-btn {
+            height: 46px;
+            border-radius: 10px;
+            border: 0;
+            background: linear-gradient(135deg, #ff8a4c 0%, #ffb088 100%);
+            font-weight: 700;
+            box-shadow: 0 12px 20px rgba(249, 115, 22, 0.22);
+        }
+
+        .stockpulse-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 22px 0 16px;
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .stockpulse-divider::before,
+        .stockpulse-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        .stockpulse-demo {
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: #fff3e8;
+            border: 1px solid #fde1cf;
+            color: #0f172a;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .stockpulse-demo strong {
+            display: block;
+            color: #7c2d12;
+        }
+
+        .stockpulse-footer {
+            margin-top: 16px;
             text-align: center;
+            font-size: 11px;
+            color: #94a3b8;
         }
 
-        @@media (max-width: 480px) {
-            .login-box-body {
-                padding: 1.5rem 1.25rem 1.75rem;
+        @@media (max-width: 991px) {
+            .stockpulse-auth {
+                flex-direction: column;
             }
-            .login-logo {
-                font-size: 1.65rem;
+
+            .stockpulse-auth__brand,
+            .stockpulse-auth__form {
+                flex: 1 1 auto;
+            }
+
+            .stockpulse-auth__brand {
+                padding: 54px 32px;
             }
         }
     </style>
 </head>
 <body class="hold-transition login-page">
-<div class="login-box">
-    <div class="login-logo">
-        <a href="@Url.Content("~/")"><b>BiznisHike</b> ShopON</a>
-    </div>
-    <div class="login-box-body">
-        <p class="login-box-msg">Sign in to start your session</p>
-
-        @if (ViewBag.Error != null)
-        {
-            <div class="alert alert-danger">@ViewBag.Error</div>
-        }
-
-        @using (Html.BeginForm("Login", "UserManagement", FormMethod.Post, new { role = "form" }))
-        {
-            @Html.AntiForgeryToken()
-            <div class="form-group has-feedback">
-                <input type="text" class="form-control" placeholder="Login" id="Login" name="Login" autocomplete="username" required autofocus />
-                <span class="fa fa-user form-control-feedback"></span>
-            </div>
-            <div class="form-group has-feedback">
-                <input type="password" class="form-control" placeholder="Password" id="Password" name="Password" autocomplete="current-password" required />
-                <span class="fa fa-lock form-control-feedback"></span>
-            </div>
-            <div class="row">
-                <div class="col-xs-12">
-                    <button type="submit" class="btn btn-primary btn-block btn-flat">Sign In</button>
+<div class="stockpulse-auth">
+    <section class="stockpulse-auth__brand">
+        <div class="stockpulse-auth__brand-inner">
+            <div class="stockpulse-brand">
+                <div class="stockpulse-brand__icon">
+                    <i class="fa fa-line-chart"></i>
+                </div>
+                <div>
+                    <p class="stockpulse-brand__name">StockPulse</p>
+                    <p class="stockpulse-brand__tagline">Inventory Management System</p>
                 </div>
             </div>
-        }
-    </div>
+
+            <div class="stockpulse-auth__headline">Manage your business with ease</div>
+            <div class="stockpulse-auth__subhead">
+                Complete inventory, sales, and customer management solution designed for growing businesses.
+            </div>
+
+            <div class="stockpulse-feature">
+                <div class="stockpulse-feature__row">
+                    <div class="stockpulse-feature__icon"><i class="fa fa-cube"></i></div>
+                    <div>
+                        <p class="stockpulse-feature__title">Product Management</p>
+                        <p class="stockpulse-feature__desc">Track inventory and manage stock levels</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stockpulse-feature">
+                <div class="stockpulse-feature__row">
+                    <div class="stockpulse-feature__icon"><i class="fa fa-bar-chart"></i></div>
+                    <div>
+                        <p class="stockpulse-feature__title">Sales Analytics</p>
+                        <p class="stockpulse-feature__desc">Real-time insights and reporting</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stockpulse-feature">
+                <div class="stockpulse-feature__row">
+                    <div class="stockpulse-feature__icon"><i class="fa fa-users"></i></div>
+                    <div>
+                        <p class="stockpulse-feature__title">Customer Management</p>
+                        <p class="stockpulse-feature__desc">Build better customer relationships</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="stockpulse-auth__form">
+        <div class="stockpulse-card">
+            <h2>Welcome Back</h2>
+            <p>Please sign in to your account to continue</p>
+
+            @if (ViewBag.Error != null)
+            {
+                <div class="alert alert-danger">@ViewBag.Error</div>
+            }
+
+            @using (Html.BeginForm("Login", "UserManagement", FormMethod.Post, new { role = "form" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("returnUrl", ViewBag.ReturnUrl as string)
+                <div class="form-group">
+                    <div class="stockpulse-label">Email Address</div>
+                    <div class="stockpulse-input">
+                        <span class="stockpulse-input__icon"><i class="fa fa-envelope-o"></i></span>
+                        <input type="text" class="form-control" placeholder="admin@stockpulse.com" id="Login" name="Login" autocomplete="username" required autofocus />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="stockpulse-label">Password</div>
+                    <div class="stockpulse-input">
+                        <span class="stockpulse-input__icon"><i class="fa fa-lock"></i></span>
+                        <input type="password" class="form-control" placeholder="Enter your password" id="Password" name="Password" autocomplete="current-password" required />
+                    </div>
+                </div>
+                <div class="stockpulse-row">
+                    <label><input type="checkbox"> Remember me</label>
+                    <a href="#" class="stockpulse-link">Forgot password?</a>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block stockpulse-btn">Sign In</button>
+            }
+
+            <div class="stockpulse-divider">Demo Access</div>
+            <div class="stockpulse-demo">
+                <strong>Email: testadmin</strong>
+                Password: Test@123
+            </div>
+            <div class="stockpulse-footer">&copy; 2026 StockPulse. All rights reserved.</div>
+        </div>
+    </section>
 </div>
 
 <script src="~/bower_components/jquery/dist/jquery.min.js"></script>

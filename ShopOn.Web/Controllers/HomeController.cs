@@ -24,17 +24,14 @@ namespace ShopOn.Web.Controllers
         //[NoCache]
         public IActionResult Index()
         {
-
-            DateTime PKDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
-            var dtStartDate = new DateTime(PKDate.Year, PKDate.Month, 1);
-            var dtEndtDate = dtStartDate.AddMonths(1).AddSeconds(-1);
+            var (dtStartDate, dtEndtDate, startDisplay, endDisplay) = Utilities.GetCurrentMonthRange();
 
             
             ViewBag.Customers = _db.Customers;
            
 
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = startDisplay;
+            ViewBag.EndDate = endDisplay;
 
             
             DashboardViewModel dbVM = new DashboardViewModel();
@@ -52,12 +49,8 @@ namespace ShopOn.Web.Controllers
                     }
                 }
 
-                if (FilteredSaleOrders.Count > 0)
-                {
-                    cust.SOes = FilteredSaleOrders;
-                    FilteredCustomers.Add(cust);
-
-                }
+                cust.SOes = FilteredSaleOrders;
+                FilteredCustomers.Add(cust);
             }
 
             dbVM.Customers = FilteredCustomers.OrderBy(x => x.Name).AsQueryable();
@@ -78,12 +71,8 @@ namespace ShopOn.Web.Controllers
                     }
                 }
 
-                if (FilteredSaleOrderDetails.Count > 0)
-                {
-                    prod.SODs = FilteredSaleOrderDetails;
-                    FilteredProducts.Add(prod);
-
-                }
+                prod.SODs = FilteredSaleOrderDetails;
+                FilteredProducts.Add(prod);
             }
 
             //IQueryable<Product> Products = _db.Products;
@@ -99,38 +88,17 @@ namespace ShopOn.Web.Controllers
         }
         public IActionResult FilterIndex(string custId, string suppId, string startDate, string endDate)
         {
-
-            DateTime dtStartDate;
-            DateTime dtEndtDate;
-
-            if (startDate == string.Empty)
-            {
-                dtStartDate = DateTime.Parse("1-1-1800");
-            }
-            else
-            {
-                dtStartDate = DateTime.Parse(startDate);
-            }
-
-            if (endDate == string.Empty)
-            {
-                dtEndtDate = DateTime.Today.AddDays(1);
-            }
-            else
-            {
-                dtEndtDate = DateTime.Parse(endDate);
-                dtEndtDate = dtEndtDate.AddDays(1);
-            }
+            var dtStartDate = Utilities.ParseStartDateOrDefaultUtc(startDate);
+            var dtEndtDate = Utilities.ParseEndDateOrDefaultUtc(endDate);
 
             ViewBag.Customers = _db.Customers;
 
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = Utilities.FormatBusinessDate(dtStartDate);
+            ViewBag.EndDate = Utilities.FormatBusinessDate(dtEndtDate);
 
             DashboardViewModel dbVM = new DashboardViewModel();
           
           
-            IQueryable<SO> selectedSOes = null;
             /////////////////////////////////////////////////////////////////////////////
             List<SO> FilteredSaleOrders;// = _db.Customers;
             List<Customer> FilteredCustomers = new List<Customer>();
@@ -145,12 +113,8 @@ namespace ShopOn.Web.Controllers
                     }
                 }
 
-                if (FilteredSaleOrders.Count > 0)
-                {
-                    cust.SOes = FilteredSaleOrders;
-                    FilteredCustomers.Add(cust);
-
-                }
+                cust.SOes = FilteredSaleOrders;
+                FilteredCustomers.Add(cust);
             }
 
             dbVM.Customers = FilteredCustomers.AsQueryable();
@@ -172,12 +136,8 @@ namespace ShopOn.Web.Controllers
                     }
                 }
 
-                if (FilteredSaleOrderDetails.Count > 0)
-                {
-                    prod.SODs = FilteredSaleOrderDetails;
-                    FilteredProducts.Add(prod);
-
-                }
+                prod.SODs = FilteredSaleOrderDetails;
+                FilteredProducts.Add(prod);
             }
 
             //IQueryable<Product> Products = _db.Products;
@@ -191,12 +151,7 @@ namespace ShopOn.Web.Controllers
         }
         public IActionResult CustomerWiseSale(int custId, string custName)
         {
-
-            //DateTime dtEndtDate = DateTime.Today.AddDays(1);
-            //DateTime dtStartDate = dtEndtDate.AddDays(-7);
-            DateTime PKDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
-            var dtStartDate = new DateTime(PKDate.Year, PKDate.Month, 1);
-            var dtEndtDate = dtStartDate.AddMonths(1).AddSeconds(-1);
+            var (dtStartDate, dtEndtDate, startDisplay, endDisplay) = Utilities.GetCurrentMonthRange();
 
             ViewBag.CustomerId = custId;
             ViewBag.CustName = custName;
@@ -204,8 +159,8 @@ namespace ShopOn.Web.Controllers
             ViewBag.Customers = _db.Customers;
             //01-Jan-2019
 
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = startDisplay;
+            ViewBag.EndDate = endDisplay;
 
             IQueryable<SO> sOes = _db.SOes;//.Include(s => s.Customer);
             sOes = sOes.Where(x => x.CustomerId == custId && x.Date >= dtStartDate && x.Date <= dtEndtDate).OrderBy(i => i.SOSerial).AsQueryable();
@@ -243,113 +198,18 @@ namespace ShopOn.Web.Controllers
         }
         public IActionResult FilterCustomerWiseSale(string custId, string suppId, string startDate, string endDate)
         {
+            var hasCustomerId = !string.IsNullOrWhiteSpace(custId);
+            var dtStartDate = Utilities.ParseStartDateOrDefaultUtc(startDate);
+            var dtEndtDate = Utilities.ParseEndDateOrDefaultUtc(endDate);
+            IQueryable<SO> selectedSOes = _db.SOes;
 
-            /////////////////////////////////////////////////////////////////////////////
-            IQueryable<SO> sOes = _db.SOes;//.Include(s => s.Customer);
-                                          //sOes = sOes.Where(x => x.CustomerId == custId && x.Date >= dtStartDate && x.Date <= dtEndtDate).OrderBy(i => i.Date).OrderBy(i => i.SOSerial).AsQueryable();
-
-
-
-
-
-
-            int intCustId;
-            DateTime dtStartDate;
-            DateTime dtEndtDate;
-            IQueryable<SO> selectedSOes = null;
-            if (endDate != string.Empty)
+            if (hasCustomerId)
             {
-                dtEndtDate = DateTime.Parse(endDate);
-                dtEndtDate = dtEndtDate.AddDays(1);
-                endDate = dtEndtDate.ToString();
-
+                var intCustId = Int32.Parse(custId);
+                selectedSOes = selectedSOes.Where(so => so.CustomerId == intCustId);
             }
 
-            if (custId != string.Empty && startDate != string.Empty && endDate != string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            if (custId == string.Empty && startDate == string.Empty && endDate == string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes;//.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customers data acornding to start end date
-            if (custId == string.Empty && startDate != string.Empty && endDate != string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with from undefined startdate to this defined enddate
-            if (custId != string.Empty && startDate == string.Empty && endDate != string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with from defined start date to undefined end date
-            if (custId != string.Empty && startDate != string.Empty && endDate == string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with all dates
-            if (custId != string.Empty && startDate == string.Empty && endDate == string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customer with defined startdate and undefined end date
-            if (custId == string.Empty && startDate != string.Empty && endDate == string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customers with undifined start date with defined enddate
-            if (custId == string.Empty && startDate == string.Empty && endDate != string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
+            selectedSOes = selectedSOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
 
 
             //foreach (SO itm in selectedSOes)
@@ -365,14 +225,12 @@ namespace ShopOn.Web.Controllers
         }
         public IActionResult ProductWiseSale(int productId)
         {
-            DateTime PKDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
-            var dtStartDate = new DateTime(PKDate.Year, PKDate.Month, 1);
-            var dtEndtDate = dtStartDate.AddMonths(1).AddSeconds(-1);
+            var (dtStartDate, dtEndtDate, startDisplay, endDisplay) = Utilities.GetCurrentMonthRange();
             ViewBag.ProductId = productId;
             ViewBag.ProductName = _db.Products.FirstOrDefault(x => x.Id == productId).Name;
             ViewBag.Customers = _db.Customers;
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = startDisplay;
+            ViewBag.EndDate = endDisplay;
 
             IQueryable<SO> sOes = _db.SOes;//.Include(s => s.Customer);
 
@@ -424,106 +282,15 @@ namespace ShopOn.Web.Controllers
             //sOes = sOes.Where(x => x.CustomerId == custId && x.Date >= dtStartDate && x.Date <= dtEndtDate).OrderBy(i => i.Date).OrderBy(i => i.SOSerial).AsQueryable();
 
 
+            var hasCustomerId = !string.IsNullOrWhiteSpace(custId);
+            var dtStartDate = Utilities.ParseStartDateOrDefaultUtc(startDate);
+            var dtEndtDate = Utilities.ParseEndDateOrDefaultUtc(endDate);
+            IQueryable<SO> selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
 
-
-
-
-            int intCustId;
-            DateTime dtStartDate;
-            DateTime dtEndtDate;
-            IQueryable<SO> selectedSOes = null;
-            if (endDate != string.Empty)
+            if (hasCustomerId)
             {
-                dtEndtDate = DateTime.Parse(endDate);
-                dtEndtDate = dtEndtDate.AddDays(1);
-                endDate = dtEndtDate.ToString();
-
-            }
-
-            if (custId != string.Empty && startDate != string.Empty && endDate != string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            if (custId == string.Empty && startDate == string.Empty && endDate == string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes;//.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customers data acornding to start end date
-            if (custId == string.Empty && startDate != string.Empty && endDate != string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with from undefined startdate to this defined enddate
-            if (custId != string.Empty && startDate == string.Empty && endDate != string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with from defined start date to undefined end date
-            if (custId != string.Empty && startDate != string.Empty && endDate == string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with all dates
-            if (custId != string.Empty && startDate == string.Empty && endDate == string.Empty)
-            {
-                intCustId = Int32.Parse(custId);
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes.Where(so => so.CustomerId == intCustId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customer with defined startdate and undefined end date
-            if (custId == string.Empty && startDate != string.Empty && endDate == string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customers with undifined start date with defined enddate
-            if (custId == string.Empty && startDate == string.Empty && endDate != string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedSOes = sOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
+                var intCustId = Int32.Parse(custId);
+                selectedSOes = selectedSOes.Where(so => so.CustomerId == intCustId);
             }
 
 

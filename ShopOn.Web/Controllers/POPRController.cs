@@ -31,9 +31,7 @@ namespace ShopOn.Web.Controllers
         // GET: POes
         public IActionResult Index()
         {
-            DateTime PKDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
-            var dtStartDate = new DateTime(PKDate.Year, PKDate.Month, 1);
-            var dtEndtDate = dtStartDate.AddMonths(1).AddSeconds(-1);
+            var (dtStartDate, dtEndtDate, startDisplay, endDisplay) = Utilities.GetCurrentMonthRange();
 
             //IQueryable<PO> pOes = _db.POes.Include(s => s.Supplier);
             IQueryable<PO> pOes = _db.POes.Where(x => x.Date >= dtStartDate && x.Date <= dtEndtDate).Include(s => s.Supplier);
@@ -56,8 +54,8 @@ namespace ShopOn.Web.Controllers
             }
             ViewBag.LstMaxSerialno = LstMaxSerialNo;
             ViewBag.Suppliers = _db.Suppliers;
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = startDisplay;
+            ViewBag.EndDate = endDisplay;
             return View(pOes.OrderByDescending(i => i.Date).ToList());
         }
         //public IActionResult SearchData(string custName, DateTime startDate, DateTime endDate)
@@ -65,104 +63,18 @@ namespace ShopOn.Web.Controllers
         //public IActionResult SearchData(string custName, string startDate, string endDate)
         public IActionResult SearchData(string suppId, string startDate, string endDate)
         {
+            var hasSupplierId = !string.IsNullOrWhiteSpace(suppId);
+            var dtStartDate = Utilities.ParseStartDateOrDefaultUtc(startDate);
+            var dtEndtDate = Utilities.ParseEndDateOrDefaultUtc(endDate);
+            IQueryable<PO> selectedPOes = _db.POes;
 
-            int intSuppId;
-            DateTime dtStartDate;
-            DateTime dtEndtDate;
-            IQueryable<PO> selectedPOes = null;
-            if (endDate != string.Empty)
+            if (hasSupplierId)
             {
-                dtEndtDate = DateTime.Parse(endDate);
-                dtEndtDate = dtEndtDate.AddDays(1);
-                endDate = dtEndtDate.ToString();
-
+                var intSuppId = Int32.Parse(suppId.Trim());
+                selectedPOes = selectedPOes.Where(so => so.SupplierId == intSuppId);
             }
 
-            if (suppId != string.Empty && startDate != string.Empty && endDate != string.Empty)
-            {
-                intSuppId = Int32.Parse(suppId);
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedPOes = _db.POes.Where(so => so.SupplierId == intSuppId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            if (suppId == string.Empty && startDate == string.Empty && endDate == string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedPOes = _db.POes;//.Where(so => so.SupplierId == intSuppId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customers data acornding to start end date
-            if (suppId == string.Empty && startDate != string.Empty && endDate != string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedPOes = _db.POes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with from undefined startdate to this defined enddate
-            if (suppId != string.Empty && startDate == string.Empty && endDate != string.Empty)
-            {
-                intSuppId = Int32.Parse(suppId.Trim());
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedPOes = _db.POes.Where(so => so.SupplierId == intSuppId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with from defined start date to undefined end date
-            if (suppId != string.Empty && startDate != string.Empty && endDate == string.Empty)
-            {
-                intSuppId = Int32.Parse(suppId.Trim());
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedPOes = _db.POes.Where(so => so.SupplierId == intSuppId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get this customer with all dates
-            if (suppId != string.Empty && startDate == string.Empty && endDate == string.Empty)
-            {
-                intSuppId = Int32.Parse(suppId.Trim());
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedPOes = _db.POes.Where(so => so.SupplierId == intSuppId && so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customer with defined startdate and undefined end date
-            if (suppId == string.Empty && startDate != string.Empty && endDate == string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse(startDate);
-                dtEndtDate = DateTime.Today.AddDays(1);
-
-                selectedPOes = _db.POes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
-
-            //get all customers with undifined start date with defined enddate
-            if (suppId == string.Empty && startDate == string.Empty && endDate != string.Empty)
-            {
-
-                dtStartDate = DateTime.Parse("1-1-1800");
-                dtEndtDate = DateTime.Parse(endDate);
-
-                selectedPOes = _db.POes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
-
-            }
+            selectedPOes = selectedPOes.Where(so => so.Date >= dtStartDate && so.Date <= dtEndtDate);
 
             GetTotalBalance(ref selectedPOes);
             Dictionary<int, int> LstMaxSerialNo = new Dictionary<int, int>();
@@ -243,16 +155,17 @@ namespace ShopOn.Web.Controllers
 
         private void GetTotalBalance(ref IQueryable<PO> POes)
         {
-            //IQueryable<SO> DistSOes = SOes.Select(x => x.CustomerId).Distinct();
-            IQueryable<PO> DistPOes = POes.GroupBy(x => x.SupplierId).Select(y => y.FirstOrDefault());
+            var supplierIds = POes
+                .Where(x => x.SupplierId.HasValue)
+                .Select(x => x.SupplierId!.Value)
+                .Distinct()
+                .ToList();
 
-            decimal TotalBalance = 0;
-            foreach (PO itm in DistPOes)
-            {
-                Supplier cust = _db.Suppliers.Where(x => x.Id == itm.SupplierId).FirstOrDefault();
-                TotalBalance += (decimal)cust.Balance;
-            }
-            ViewBag.TotalBalance = TotalBalance;
+            var totalBalance = _db.Suppliers
+                .Where(x => supplierIds.Contains(x.Id))
+                .Sum(x => (decimal?)x.Balance) ?? 0;
+
+            ViewBag.TotalBalance = totalBalance;
 
         }
         //[ChildActionOnly]
@@ -305,6 +218,16 @@ namespace ShopOn.Web.Controllers
             //PO pO = new PO();
             if (ModelState.IsValid)
             {
+                var purchaseOrderDetails = (pOD ?? new List<POD>())
+                    .Where(pod => pod.ProductId.HasValue && pod.ProductId.Value > 0 && pod.Quantity.HasValue && pod.Quantity.Value > 0)
+                    .ToList();
+
+                if (purchaseOrderDetails.Count == 0)
+                {
+                    ModelState.AddModelError("", "Please select at least one valid product.");
+                    return View(BuildCreatePurchaseOrderViewModel(pO, Supplier));
+                }
+
                 Supplier supp = _db.Suppliers.FirstOrDefault(x => x.Id == pO.SupplierId);
                 if (supp == null)
                 {//its means new customer
@@ -338,7 +261,7 @@ namespace ShopOn.Web.Controllers
                 maxId1 += 1;
                 pO.POSerial = maxId1;
                 //pO.Date = DateTime.Now;
-                pO.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
+                pO.Date = DateTime.UtcNow;
                 //pO.SaleReturn = false;
                 pO.Id = System.Guid.NewGuid().ToString().ToUpper();
                 pO.PurchaseOrderAmount = 0;
@@ -352,10 +275,10 @@ namespace ShopOn.Web.Controllers
                 _db.POes.Add(pO);
                 //_db.SaveChanges();
                 int sno = 0;
-                if (pOD != null)
+                if (purchaseOrderDetails.Count > 0)
                 {
                     //pOD.RemoveAll(so => so.ProductId == null);
-                    foreach (POD pod in pOD)
+                    foreach (POD pod in purchaseOrderDetails)
                     {
                         sno += 1;
                         pod.PODId = sno;
@@ -363,6 +286,11 @@ namespace ShopOn.Web.Controllers
                         pod.POId = pO.Id;
 
                         Product product = _db.Products.FirstOrDefault(x => x.Id == pod.ProductId);
+                        if (product == null)
+                        {
+                            ModelState.AddModelError("", $"The selected product for line item {sno} could not be found. Please choose it again from the list.");
+                            return View(BuildCreatePurchaseOrderViewModel(pO, Supplier));
+                        }
 
                         //dont do this. when user made a bill and chnage sale price. it does not reflect in bill and calculations geting wrong
                         //pod.PurchasePrice = product.PurchasePrice;
@@ -414,7 +342,7 @@ namespace ShopOn.Web.Controllers
                         }
 
                     }
-                    _db.PODs.AddRange(pOD);
+                    _db.PODs.AddRange(purchaseOrderDetails);
                 }
                 _db.SaveChanges();
 
@@ -450,13 +378,23 @@ namespace ShopOn.Web.Controllers
 
             //ViewBag.SupplierId = new SelectList(_db.Suppliers, "Id", "Name", pO.SupplierId);
             //return View(pO);
-            PurchaseOrderViewModel purchaseOrderViewModel = new PurchaseOrderViewModel();
-            purchaseOrderViewModel.Suppliers = _db.Suppliers;
-            purchaseOrderViewModel.Products = _db.Products;
-
-            return View(purchaseOrderViewModel);
+            return View(BuildCreatePurchaseOrderViewModel(pO, Supplier));
             //return View();
 
+        }
+
+        private PurchaseOrderViewModel BuildCreatePurchaseOrderViewModel(PO? purchaseOrder = null, Supplier? supplier = null)
+        {
+            ViewBag.SuggestedNewSuppId = _db.Suppliers.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id) + 1;
+            ViewBag.IsReturn = (purchaseOrder?.PurchaseReturn ?? false).ToString().ToLower();
+
+            return new PurchaseOrderViewModel
+            {
+                PurchaseOrder = purchaseOrder,
+                Supplier = supplier,
+                Suppliers = _db.Suppliers,
+                Products = _db.Products.Where(x => x.Saleable == true)
+            };
         }
         //public void PrintSO(string POId)
         //{
@@ -567,7 +505,7 @@ namespace ShopOn.Web.Controllers
             {
                 newPO.Id = Encryption.Decrypt(purchaseOrderViewModel1.PurchaseOrder.Id, "BZNS");//
                 PO PO = _db.POes.Where(x => x.Id == newPO.Id).FirstOrDefault();
-                PO.Date = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));//
+                PO.Date = DateTime.UtcNow;//
                 //PO.PurchaseReturn = false;//
                 PO.BillAmount = newPO.BillAmount;//
                 PO.Discount = newPO.Discount;//

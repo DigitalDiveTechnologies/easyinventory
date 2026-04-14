@@ -23,17 +23,14 @@ namespace ShopOn.Web.Controllers
         //[NoCache]
         public IActionResult Summary()
         {
-
-            DateTime PKDate = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, TimeZoneInfo.FindSystemTimeZoneById("Pakistan Standard Time"));
-            var dtStartDate = new DateTime(PKDate.Year, PKDate.Month, 1);
-            var dtEndtDate = dtStartDate.AddMonths(1).AddSeconds(-1);
+            var (dtStartDate, dtEndtDate, startDisplay, endDisplay) = Utilities.GetCurrentMonthRange();
 
             
             ViewBag.Customers = _db.Customers;
            
 
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = startDisplay;
+            ViewBag.EndDate = endDisplay;
 
             
             DashboardViewModel dbVM = new DashboardViewModel();
@@ -84,13 +81,9 @@ namespace ShopOn.Web.Controllers
                 
 
 
-                if (FilteredSaleOrderDetails.Count > 0 || FilteredPurchaseOrderDetails.Count > 0)
-                {
-                    prod.SODs = FilteredSaleOrderDetails;
-                    prod.PODs = FilteredPurchaseOrderDetails;
-                    FilteredProducts.Add(prod);
-
-                }
+                prod.SODs = FilteredSaleOrderDetails;
+                prod.PODs = FilteredPurchaseOrderDetails;
+                FilteredProducts.Add(prod);
 
 
 
@@ -112,33 +105,13 @@ namespace ShopOn.Web.Controllers
         }
         public IActionResult FilterIndex(string custId, string suppId, string startDate, string endDate)
         {
-
-            DateTime dtStartDate;
-            DateTime dtEndtDate;
-
-            if (startDate == string.Empty)
-            {
-                dtStartDate = DateTime.Parse("1-1-1800");
-            }
-            else
-            {
-                dtStartDate = DateTime.Parse(startDate);
-            }
-
-            if (endDate == string.Empty)
-            {
-                dtEndtDate = DateTime.Today.AddDays(1);
-            }
-            else
-            {
-                dtEndtDate = DateTime.Parse(endDate);
-                dtEndtDate = dtEndtDate.AddDays(1);
-            }
+            var dtStartDate = Utilities.ParseStartDateOrDefaultUtc(startDate);
+            var dtEndtDate = Utilities.ParseEndDateOrDefaultUtc(endDate);
 
             ViewBag.Customers = _db.Customers;
 
-            ViewBag.StartDate = dtStartDate.ToString("dd-MMM-yyyy");
-            ViewBag.EndDate = dtEndtDate.ToString("dd-MMM-yyyy");
+            ViewBag.StartDate = Utilities.FormatBusinessDate(dtStartDate);
+            ViewBag.EndDate = Utilities.FormatBusinessDate(dtEndtDate);
 
             DashboardViewModel dbVM = new DashboardViewModel();
           
@@ -191,13 +164,9 @@ namespace ShopOn.Web.Controllers
 
 
 
-                if (FilteredSaleOrderDetails.Count > 0 || FilteredPurchaseOrderDetails.Count > 0)
-                {
-                    prod.SODs = FilteredSaleOrderDetails;
-                    prod.PODs = FilteredPurchaseOrderDetails;
-                    FilteredProducts.Add(prod);
-
-                }
+                prod.SODs = FilteredSaleOrderDetails;
+                prod.PODs = FilteredPurchaseOrderDetails;
+                FilteredProducts.Add(prod);
 
 
 

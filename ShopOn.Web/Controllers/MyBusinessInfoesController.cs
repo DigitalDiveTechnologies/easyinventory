@@ -24,7 +24,13 @@ namespace ShopOn.Web.Controllers
         // GET: MyBusinessInfoes
         public IActionResult Index()
         {
-            return View(_db.MyBusinessInfos.ToList());
+            var myBusinessInfo = _db.MyBusinessInfos.OrderBy(x => x.Id).FirstOrDefault();
+            if (myBusinessInfo == null)
+            {
+                return RedirectToAction("Create");
+            }
+
+            return RedirectToAction("Edit", new { id = myBusinessInfo.Id });
         }
 
         // GET: MyBusinessInfoes/Details/5
@@ -45,7 +51,16 @@ namespace ShopOn.Web.Controllers
         // GET: MyBusinessInfoes/Create
         public IActionResult Create()
         {
-            return View();
+            var existingBusinessInfo = _db.MyBusinessInfos.OrderBy(x => x.Id).FirstOrDefault();
+            if (existingBusinessInfo != null)
+            {
+                return RedirectToAction("Edit", new { id = existingBusinessInfo.Id });
+            }
+
+            return View(new MyBusinessInfo
+            {
+                Id = GetNextBusinessInfoId()
+            });
         }
 
         // POST: MyBusinessInfoes/Create
@@ -55,29 +70,41 @@ namespace ShopOn.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,BizName,BizAddress,Mobile,Email,Website,Tagline")] MyBusinessInfo myBusinessInfo)
         {
+            if (_db.MyBusinessInfos.Any())
+            {
+                var existingBusinessInfo = _db.MyBusinessInfos.OrderBy(x => x.Id).First();
+                return RedirectToAction("Edit", new { id = existingBusinessInfo.Id });
+            }
+
             if (ModelState.IsValid)
             {
                 _db.MyBusinessInfos.Add(myBusinessInfo);
                 _db.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Edit", new { id = myBusinessInfo.Id });
             }
 
             return View(myBusinessInfo);
         }
 
         // GET: MyBusinessInfoes/Edit/5
-        public IActionResult Edit(decimal id)
+        public IActionResult Edit(decimal? id)
         {
             if (id == null)
             {
-                return BadRequest();
+                return RedirectToAction("Index");
             }
-            //MyBusinessInfo myBusinessInfo = _db.MyBusinessInfos.Find(id);
-            MyBusinessInfo myBusinessInfo = _db.MyBusinessInfos.FirstOrDefault();
+
+            MyBusinessInfo myBusinessInfo = _db.MyBusinessInfos.Find(id);
             if (myBusinessInfo == null)
             {
-                return NotFound();
+                myBusinessInfo = _db.MyBusinessInfos.OrderBy(x => x.Id).FirstOrDefault();
             }
+
+            if (myBusinessInfo == null)
+            {
+                return RedirectToAction("Create");
+            }
+
             return View(myBusinessInfo);
         }
 
@@ -88,6 +115,11 @@ namespace ShopOn.Web.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit([Bind("Id,BizName,BizAddress,Mobile,Email,Website,Tagline")] MyBusinessInfo myBusinessInfo)
         {
+            if (!_db.MyBusinessInfos.Any(x => x.Id == myBusinessInfo.Id))
+            {
+                return RedirectToAction("Create");
+            }
+
             if (ModelState.IsValid)
             {
                 _db.Entry(myBusinessInfo).State = EntityState.Modified;
@@ -96,6 +128,11 @@ namespace ShopOn.Web.Controllers
                 return RedirectToAction("Create", "SOSR", new { IsReturn = "false" });
             }
             return View(myBusinessInfo);
+        }
+
+        private decimal GetNextBusinessInfoId()
+        {
+            return _db.MyBusinessInfos.DefaultIfEmpty().Max(p => p == null ? 0 : p.Id) + 1;
         }
 
         // GET: MyBusinessInfoes/Delete/5

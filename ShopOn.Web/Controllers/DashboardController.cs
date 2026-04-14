@@ -62,7 +62,7 @@ namespace ShopOn.Web.Controllers
             ViewBag.SOCount = SaleOrderCount;
 
             decimal SaleOrderAmount = 0;
-           SaleOrderAmount = (decimal)(_db.SOes.Sum(x => x.SaleOrderAmount) ?? 0);
+            SaleOrderAmount = _db.SOes.Sum(x => x.BillAmount);
             //ViewBag.Sales = SaleOrderAmount;
             ViewBag.SOAmount = SaleOrderAmount;
 
@@ -71,7 +71,7 @@ namespace ShopOn.Web.Controllers
 
              decimal PurchaseOrderAmount = 0;
 
-            PurchaseOrderAmount = (decimal)(_db.POes.Sum(x => x.PurchaseOrderAmount) ?? 0);
+            PurchaseOrderAmount = _db.POes.Sum(x => x.BillAmount);
              ViewBag.POAmount = PurchaseOrderAmount;
 
             decimal Profit = (decimal)(_db.SOes.Sum(x => x.Profit) ?? 0);
@@ -87,6 +87,23 @@ namespace ShopOn.Web.Controllers
             ViewBag.Customers = _db.Customers.Count();
             
             ViewBag.Employees = _db.Employees.Count();
+
+            var recentSales = _db.SOes
+                .Include(x => x.Customer)
+                .Where(x => x.SaleReturn == false || x.SaleReturn == null)
+                .OrderByDescending(x => x.Date ?? DateTime.MinValue)
+                .Take(5)
+                .ToList();
+            ViewBag.RecentSales = recentSales;
+
+            var lowStockQuery = _db.Products.Where(p =>
+                p.Stock.HasValue &&
+                (p.ReOrder.HasValue ? p.Stock <= p.ReOrder.Value : p.Stock <= 0));
+            ViewBag.LowStockCount = lowStockQuery.Count();
+            ViewBag.LowStockProducts = lowStockQuery
+                .OrderBy(p => p.Stock)
+                .Take(5)
+                .ToList();
 
             return View();
         }

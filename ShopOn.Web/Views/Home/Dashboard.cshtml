@@ -37,72 +37,35 @@
 @*<script src="~/bower_components/datatables.net/js/jquery.dataTables.min.js"></script>*@
 @*<script src="~/bower_components/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>*@
 
-<center><h2>Summary</h2></center>
-
-
 <input type="hidden" name="supplierId" id="supplierId" value="@ViewBag.SupplierId" />
-@*<h1>@ViewBag.myLog</h1>*@
 
+<div class="sp-page">
+    <section class="sp-hero">
+        <div class="sp-hero__icon"><i class="fa fa-line-chart"></i></div>
+        <div class="sp-hero__text">
+            <h1 class="sp-hero__title">Summary</h1>
+            <p class="sp-hero__subtitle">Track orders, returns, and profit</p>
+        </div>
+        <div class="sp-hero__actions">
+            <a href="#" id="printMe" class="btn btn-primary"><i class="fa fa-print"></i> Print</a>
+        </div>
+    </section>
 
-
-@*<p>
-        @Html.ActionLink("Create New Sale Order", "Create")
-    </p>*@
-
-<form name="registration_form_Product" id='registration_form_Product' class="form-inline noPrint">
-    <center>
-        <div class="row">
-            <input type="hidden" name="SaleOrder.CustomerId" id="idnCustomer" value="@ViewBag.CustomerId" />
-            @*@Html.Label("Customer Name", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
-            @*@Html.Editor("custName", new { htmlAttributes = new { @class = "form-control", @placeholder = "Search by customer" } })*@
-
-            @*<input type="text" autocomplete="off" class="form-control" name="Customer.Name" id="customer" value="" placeholder="Search by customer" data-toggle="tooltip" data-placement="top" title="Search by customer">*@
-            <input type="hidden" autocomplete="off" class="form-control" name="Customer.Name" id="customer" value="" placeholder="Search by customer" data-toggle="tooltip" data-placement="top" title="Search by customer">
-
-            @*@Html.Label("Time", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
+    <form name="registration_form_Product" id="registration_form_Product" class="sp-filter noPrint">
+        <input type="hidden" name="SaleOrder.CustomerId" id="idnCustomer" value="@ViewBag.CustomerId" />
+        <input type="hidden" autocomplete="off" class="form-control" name="Customer.Name" id="customer" value="" placeholder="Search by customer" data-toggle="tooltip" data-placement="top" title="Search by customer">
+        <span class="sp-filter__icon"><i class="fa fa-search"></i></span>
+        <div class="sp-filter__field">
             @Html.Editor("startDate", new { htmlAttributes = new { @class = "form-control datepicker", @id = "datepickerStart", @placeholder = "Start date", @Value = ViewBag.StartDate } })
-
-
-            @*@Html.Label("Time", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
+        </div>
+        <div class="sp-filter__field">
             @Html.Editor("endDate", new { htmlAttributes = new { @class = "form-control datepicker", @id = "datepickerEnd", @placeholder = "End date", @Value = ViewBag.EndDate } })
-
-            <input type="button" value="Go" id="btnSearch" class="btn btn-info add-new" />
-
-            @*<input type="date" value="Search" id="btnSearch1" class="form-control " />*@
-
         </div>
-    </center>
-    @*<button class="printMe" value="print">Print</button>*@
-    @*<a href="invoice-print.html" target="_blank" class="btn btn-default"><i class="fa fa-print"></i> Print</a>*@
+        <button type="button" id="btnSearch" class="btn btn-primary"><i class="fa fa-filter"></i> Go</button>
+    </form>
 
-    @*<div style='float:right;'>
-            <button value="falsfja" style='position:fixed;'>heloo</button>
-        </div>*@
-    <div class="row">
-        @*<div class="col-sm-8"><h2>Sale <b>Order</b></h2></div>*@
-
-        <div class="col-sm-11">
-            @*<textarea name="SaleOrder.Remarks" rows="1" cols="100" class="form-control" placeholder="Remarks..." data-toggle="tooltip" data-placement="top" title="Text of this text box will also print on bill"></textarea>*@
-        </div>
-
-        <div class="col-sm-1">
-            @*<button type="submit" id="CreateSO" class="btn btn-info add-new"><i class="fa fa-plus"></i>Save & Print</button>*@
-            <a href="#" id="printMe" class="btn btn-info "><i class=""></i> Print</a>
-        </div>
-
-    </div>
-
-    @*<input type="button" onclick="printDiv('print-content')" value="print a div!" />*@
-    @*<button onclick="myFunction()">Print this page</button>*@
-
-</form>
-
-
-
-@{Html.RenderPartial("_Dashboard", Model); }
+    @{Html.RenderPartial("_Dashboard", Model); }
+</div>
 
 @*<style type="text/css" media="print">
         .NonPrintable {
@@ -146,11 +109,7 @@
         //var date = $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' }).val();
         $('.datepicker').datepicker({
             dateFormat: 'dd-M-yy',
-            showOn: "both"//,
-            //buttonImageOnly: true,
-            //buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
-
-            //buttonText: "Select date"
+            showOn: "focus"
         });
 
     });

@@ -1,115 +1,112 @@
 @model IEnumerable<EasyInventory.PgData.Entities.Product>
-
-    @{
+@{
     ViewBag.Title = "Products";
-    //Layout = "~/Views/Shared/_Layout.cshtml";
-    }
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var supplierRecords = ((IEnumerable<EasyInventory.PgData.Entities.Supplier>)ViewBag.Suppliers).Count();
+    var saleableItems = Model.Count(p => p.Saleable == true);
+    var hiddenFromSales = Model.Count(p => p.Saleable != true);
+}
 
+<link href="@Url.Content("~/Content/custom/downloads/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" type="text/css" />
+<script src="~/Content/custom/downloads/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script src="~/Content/custom/supplierPOPR.js"></script>
+<link href="~/Content/custom/downloads/datatables.min.css" rel="stylesheet" />
+<script src="~/Content/custom/downloads/datatables.min.js"></script>
+<script src="~/Content/custom/downloads/jquery.mcautocomplete.js"></script>
 
-    <link href="@Url.Content("~/Content/custom/downloads/jquery-ui-1.12.1.custom/jquery-ui.min.css")" rel="stylesheet" type="text/css" />
-    @*<link href="@Url.Content("~/Content/custom/downloads/jquery-ui.min.css")" rel="stylesheet" type="text/css" />*@
-    <script src="~/Content/custom/downloads/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<div class="sp-page">
+    <section class="sp-hero">
+        <div class="sp-hero__icon"><i class="fa fa-cube"></i></div>
+        <div class="sp-hero__text">
+            <h1 class="sp-hero__title">Product Catalog</h1>
+            <p class="sp-hero__subtitle">Manage your entire product inventory</p>
+        </div>
+        <div class="sp-hero__actions">
+            <a href="/Products/Create" id="createProduct" class="btn btn-primary"><i class="fa fa-plus"></i> Add Product</a>
+        </div>
+    </section>
 
-
-    @*<link href="@Url.Content("~/Content/custom/custom.css")" rel="stylesheet" type="text/css" />*@
-    <script src="~/Content/custom/supplierPOPR.js"></script>
-    @*<link rel="stylesheet" href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
-    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>*@
-    <link href="~/Content/custom/downloads/datatables.min.css" rel="stylesheet" />
-    <script src="~/Content/custom/downloads/datatables.min.js"></script>
-    <script src="~/Content/custom/downloads/jquery.mcautocomplete.js"></script>
-    <center><h2>Products</h2></center>
-
-    @*<p>
-        @Html.ActionLink("Create New Product", "Create")
-    </p>*@
-
-    <div class="col-sm-12">
-        @*<button type="submit" id="CreateSO" class="btn btn-info add-new"><i class="fa fa-plus"></i>Save & Print</button>*@
-        <a href="/Products/Create" id="createProduct" class="btn btn-info "><i class=""></i> New Product</a> |
-        <a href="/SOSR/Create?IsReturn=false" id="createSOSR" class=""><i class=""></i> New Sale</a> |
-        <a href="/POPR/Create?IsReturn=false" id="createPOPR" class=""><i class=""></i> New Purchase</a>
+    <div class="sp-stat-grid">
+        <div class="sp-stat-card">
+            <div>
+                <p class="sp-stat-card__label">Total Products</p>
+                <p class="sp-stat-card__value">@Model.Count()</p>
+            </div>
+            <span class="sp-stat-card__icon"><i class="fa fa-cube"></i></span>
+        </div>
+        <div class="sp-stat-card">
+            <div>
+                <p class="sp-stat-card__label">Categories</p>
+                <p class="sp-stat-card__value">@supplierRecords</p>
+            </div>
+            <span class="sp-stat-card__icon"><i class="fa fa-folder"></i></span>
+        </div>
+        <div class="sp-stat-card">
+            <div>
+                <p class="sp-stat-card__label">Low Stock</p>
+                <p class="sp-stat-card__value">@hiddenFromSales</p>
+            </div>
+            <span class="sp-stat-card__icon"><i class="fa fa-warning"></i></span>
+        </div>
     </div>
 
-    <form name="registration_form_Product" id='registration_form_Product' class="form-inline">
-        <center>
-            <div class="row">
-                <input type="hidden" name="SupplierId" id="idnSupplier" value="" />
-                @*@Html.Label("Supplier Name", htmlAttributes: new { @class = "control-label col-md-2" })*@
-
-                @*@Html.Editor("custName", new { htmlAttributes = new { @class = "form-control", @placeholder = "Enter supplier name" } })*@
-                <input type="text" autocomplete="off" class="form-control" name="Supplier.Name" id="supplier" value="" placeholder="Search by supplier" data-toggle="tooltip" data-placement="top" title="Search by supplier">
-
-                <input type="button" value="Go" id="btnSearch" class="btn btn-info add-new" />
-
-                @*<input type="date" value="Search" id="btnSearch1" class="form-control " />*@
-
+    <section class="inventory-surface">
+        <div class="inventory-toolbar">
+            <div>
+                <h2 class="inventory-toolbar__title">Filter by Supplier</h2>
+                <p class="inventory-toolbar__subtitle">Use the supplier search below to narrow the catalog without leaving the page.</p>
             </div>
-        </center>
-    </form>
+        </div>
 
-    @{Html.RenderPartial("_SelectedProducts", Model); }
+        <form name="registration_form_Product" id="registration_form_Product" style="margin-top: 18px;">
+            <div class="inventory-form-inline">
+                <input type="hidden" name="SupplierId" id="idnSupplier" value="" />
+                <input type="text" autocomplete="off" class="form-control" name="Supplier.Name" id="supplier" value="" placeholder="Search by supplier" data-toggle="tooltip" data-placement="top" title="Search by supplier">
+                <input type="button" value="Go" id="btnSearch" class="btn btn-info add-new" />
+            </div>
+        </form>
+    </section>
 
-    <script type="text/javascript">
-        @foreach(var d in ViewBag.Suppliers)
-        {
-            @*@: products.push(["@d.Name", "@d.PurchasePrice", "@d.Stock"]);*@
-                @: suppliers.push(["@d.Id", "@d.Name", "@d.Address", "@d.Balance"]);
-        }
+    <div id="NewData">
+        @{Html.RenderPartial("_SelectedProducts", Model);}
+    </div>
+</div>
 
-        OnTypeSupplierName('#supplier');
-        $(function () { // will trigger when the document is ready
-            //var date = $('.datepicker').datepicker({ dateFormat: 'dd-mm-yy' }).val();
-            $('.datepicker').datepicker({
-                dateFormat: 'dd-M-yy',
-                showOn: "both"//,
-                //buttonImageOnly: true,
-                //buttonImage: "http://jqueryui.com/resources/demos/datepicker/images/calendar.gif",
+<script type="text/javascript">
+    @foreach (var d in ViewBag.Suppliers)
+    {
+        @: suppliers.push(["@d.Id", "@d.Name", "@d.Address", "@d.Balance"]);
+    }
 
-                //buttonText: "Select date"
-            });
-
+    OnTypeSupplierName('#supplier');
+    $(function () {
+        $('.datepicker').datepicker({
+            dateFormat: 'dd-M-yy',
+            showOn: "both"
         });
+    });
 
-        $(document).ready(function () {
+    $(document).ready(function () {
+        $('#btnSearch').click(function () {
+            var suppId = $('#idnSupplier').val();
 
-            $('#btnSearch').click(function () {
-                var suppId = $('#idnSupplier').val();
-                //alert(suppId);
+            if ($('#supplier').val().trim() != "" && $('#idnSupplier').val() == "") {
+                alert('Supplier not selected. Please select supplier from list');
+                return false;
+            }
 
-                if ($('#supplier').val().trim() != "" && $('#idnSupplier').val() == "") {
-                    alert('Supplier not selected. Please select supplier from list');
-                    return false;
+            $.ajax({
+                url: "@Url.Action("SearchData", "Products")",
+                data: { 'suppId': suppId },
+                type: "GET",
+                cache: false,
+                success: function (data) {
+                    $("#NewData").html(data);
+                },
+                error: function () {
+                    alert('Data provided was not valid');
                 }
-
-
-                //if ($('#idnSupplier').val() == "") {
-                //    alert('Supplier not selected. Please select supplier from list');
-                //    return false;
-
-                //}
-
-
-                //$('#loading-image').show();
-                $.ajax({
-                    url: "@Url.Action("SearchData", "Products")",
-                    data: { 'suppId': suppId },
-                    type: "GET",
-                    cache: false,
-                    success: function (data) {
-                        //alert(data);
-                        $("#NewData").html(data);
-
-                        //$("#hdnOrigComments").val($('#txtComments').val());
-                        //$('#lblCommentsNotification').text(savingStatus);
-                    },
-                    error: function (xhr, ajaxOptions, thrownError) {
-                        //$('#lblCommentsNotification').text("Error encountered while saving the comments.");
-                        alert('Data provided was not valid');
-                    }
-                });
             });
-
-
         });
-    </script>
+    });
+</script>

@@ -20,18 +20,20 @@ namespace ShopOn.Web.Controllers
         public UserManagementController(EasyInventoryDbContext db) { _db = db; }
 
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string? returnUrl = null)
         {
+            ViewBag.ReturnUrl = returnUrl;
             return View();
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Login(string Login, string Password)
+        public IActionResult Login(string Login, string Password, string? returnUrl = null)
         {
             if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
             {
                 ViewBag.Error = "Login and password are required.";
+                ViewBag.ReturnUrl = returnUrl;
                 return View();
             }
 
@@ -40,11 +42,17 @@ namespace ShopOn.Web.Controllers
             if (employee == null)
             {
                 ViewBag.Error = "Invalid login or password.";
+                ViewBag.ReturnUrl = returnUrl;
                 return View();
             }
 
             HttpContext.Session.SetCurrentUser(employee);
-            return RedirectToAction("Index", "Home");
+            if (!string.IsNullOrWhiteSpace(returnUrl) && Url.IsLocalUrl(returnUrl))
+            {
+                return Redirect(returnUrl);
+            }
+
+            return RedirectToAction("Index", "Dashboard");
         }
 
         [HttpGet]
