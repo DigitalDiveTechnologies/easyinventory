@@ -19,4 +19,8 @@
     <ProjectReference Include="..\EasyInventory.NeonDb\src\EasyInventory.PgData\EasyInventory.PgData.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="wwwroot\bower_components\**\*" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>

@@ -7,7 +7,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@ViewBag.Title - StockPulse</title>
+    <title>@ViewBag.Title - Inventra</title>
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
 
     <link rel="stylesheet" href="~/Content/bootstrap.min.css">
@@ -283,7 +283,63 @@
             }
 
             .stockpulse-auth__brand {
-                padding: 54px 32px;
+                padding: 42px 24px;
+            }
+
+            .stockpulse-auth__form {
+                padding: 28px 18px 36px;
+            }
+
+            .stockpulse-card {
+                max-width: 100%;
+                padding: 26px 20px;
+                border-radius: 18px;
+            }
+
+            .stockpulse-auth__headline {
+                font-size: 28px;
+            }
+
+            .stockpulse-feature {
+                padding: 16px;
+            }
+        }
+
+        @@media (max-width: 575px) {
+            .stockpulse-brand__icon {
+                width: 46px;
+                height: 46px;
+                font-size: 22px;
+            }
+
+            .stockpulse-brand__name {
+                font-size: 22px;
+            }
+
+            .stockpulse-auth__headline {
+                font-size: 24px;
+            }
+
+            .stockpulse-auth__subhead {
+                font-size: 14px;
+            }
+
+            .stockpulse-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .stockpulse-row label {
+                width: 100%;
+            }
+
+            .stockpulse-link {
+                align-self: flex-end;
+            }
+
+            .stockpulse-btn {
+                width: 100%;
             }
         }
     </style>
@@ -297,7 +353,7 @@
                     <i class="fa fa-line-chart"></i>
                 </div>
                 <div>
-                    <p class="stockpulse-brand__name">StockPulse</p>
+                    <p class="stockpulse-brand__name">Inventra</p>
                     <p class="stockpulse-brand__tagline">Inventory Management System</p>
                 </div>
             </div>
@@ -357,7 +413,7 @@
                     <div class="stockpulse-label">Email Address</div>
                     <div class="stockpulse-input">
                         <span class="stockpulse-input__icon"><i class="fa fa-envelope-o"></i></span>
-                        <input type="text" class="form-control" placeholder="admin@stockpulse.com" id="Login" name="Login" autocomplete="username" required autofocus />
+                        <input type="text" class="form-control" placeholder="admin@inventra.com" id="Login" name="Login" autocomplete="username" required autofocus />
                     </div>
                 </div>
                 <div class="form-group">
@@ -379,7 +435,7 @@
                 <strong>Email: testadmin</strong>
                 Password: Test@123
             </div>
-            <div class="stockpulse-footer">&copy; 2026 StockPulse. All rights reserved.</div>
+            <div class="stockpulse-footer">&copy; 2026 Inventra. All rights reserved.</div>
         </div>
     </section>
 </div>

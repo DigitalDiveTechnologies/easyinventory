@@ -22,10 +22,10 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="container" id="container">
+    <div class="container po-create-page" id="container">
         <div class="table-wrapper">
             <div class="table-title">
-                <div class="row">
+                <div class="row po-form-row">
                     <div class="col-sm-offset-5"><h2>Purchase <b>Order</b></h2></div>
                     @*<div class="col-sm-4">
                             <button type="button" id="addNewRow" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
@@ -33,7 +33,7 @@
                 </div>
                 <input type="hidden" name="PurchaseOrder.PurchaseReturn" id="purchaseReturn" value=@ViewBag.IsReturn />
                 <input type="hidden" name="PurchaseOrder.SupplierId" id="idnSupplier" value="" />
-                <div class="row">
+                <div class="row po-form-row">
                     <div class="col-sm-6">
                         <h5><b>Supplier Name</b></h5>
                         <input type="text" autocomplete="off" class="form-control" name="Supplier.Name" id="supplier" value="" placeholder="Type supplier name" data-toggle="tooltip" data-placement="top" title="Type supplier name">
@@ -50,7 +50,7 @@
 
             </div>
 
-
+            <div class="po-table-scroll po-product-scroll">
             <table id="selectedProducts" class="table table-bordered">
                 <thead>
                     <tr>
@@ -93,30 +93,30 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td id="SNo0">1</td>
-                        <td style="display:none;"><input type="hidden" name="PurchaseOrderDetail.Index" value="0" /></td>
-                        <td style="display:none;"><input type="text" readonly class="form-control classBGcolor" name="PurchaseOrderDetail[0].ProductId" id="idn0"></td>
+                        <td id="SNo0" data-label="#">1</td>
+                        <td style="display:none;" data-label="Index"><input type="hidden" name="PurchaseOrderDetail.Index" value="0" /></td>
+                        <td style="display:none;" data-label="Product Id"><input type="text" readonly class="form-control classBGcolor" name="PurchaseOrderDetail[0].ProductId" id="idn0"></td>
                         @*<td><input type="text" class="form-control" name="name0" id="name0" onkeyup="myFunction()" data-toggle="tooltip" data-placement="top" title="Type product name"></td>*@
                         @*<td><input type="text" autocomplete="off"  class="form-control" name="name0" id="name0" onkeyup="myFunction()"></td>*@
-                        <td><input type="text" autocomplete="off" class="form-control" name="name0" id="name0" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"></td>
-                        <td><input type="text" autocomplete="off" class="form-control classBGcolor" name="PurchaseOrderDetail[0].PurchasePrice" id="purchasePrice0"></td>
-                        <td><input type="text" autocomplete="off" class="form-control" name="PurchaseOrderDetail[0].Quantity" id="quantity0"></td>
-                        <td>
+                        <td data-label="Name"><input type="text" autocomplete="off" class="form-control" name="name0" id="name0" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"></td>
+                        <td data-label="Purchase Price"><input type="text" autocomplete="off" class="form-control classBGcolor" name="PurchaseOrderDetail[0].PurchasePrice" id="purchasePrice0"></td>
+                        <td data-label="Quantity"><input type="text" autocomplete="off" class="form-control" name="PurchaseOrderDetail[0].Quantity" id="quantity0"></td>
+                        <td data-label="Unit">
                             <select class="form-control" name="PurchaseOrderDetail[0].IsPack" id="isPack0">
                                 <option value="false">Piece</option>
                                 <option value="true" selected>Pack</option>
                             </select>
                         </td>
-                        <td><input type="text" readonly autocomplete="off" class="form-control" name="PurchaseOrderDetail[0].PerPack" id="perPack0"></td>
-                        <td><input type="text" readonly class="form-control classBGcolor" name="itemTotal0" id="itemTotal0" tabindex="-1"></td>
-                        <td style="display:none;">
+                        <td data-label="Per Pack"><input type="text" readonly autocomplete="off" class="form-control" name="PurchaseOrderDetail[0].PerPack" id="perPack0"></td>
+                        <td data-label="Item Total"><input type="text" readonly class="form-control classBGcolor" name="itemTotal0" id="itemTotal0" tabindex="-1"></td>
+                        <td style="display:none;" data-label="Type">
                             <select class="form-control" name="PurchaseOrderDetail[0].SaleType" id="saleType0">
                                 <option value="false" selected>Order</option>
                                 <option value="true">Return</option>
                             </select>
                         </td>
 
-                        <td>
+                        <td data-label="Actions">
                             @*<a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
                                 <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>*@
                             @*<a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>*@
@@ -129,6 +129,7 @@
                 </tbody>
 
             </table>
+            </div>
 
             <div class="table-title">
                 <div class="row">
@@ -138,7 +139,8 @@
                 </div>
             </div>
 
-            <div style="display:inline" id="dvCalculations">
+            <div id="dvCalculations" class="po-calculations">
+                <div class="po-table-scroll po-summary-scroll">
                 <table id="grandTotal" class="table borderless">
                     <thead>
                         <tr>
@@ -236,14 +238,15 @@
                     </tbody>
 
                 </table>
+                </div>
 
 
 
 
 
-                <div class="table-title">
+                <div class="table-title po-payment-block">
 
-                    <div class="row">
+                    <div class="row po-payment-row">
                         @*<div class="col-sm-8"><h2>Purchase <b>Order</b></h2></div>*@
                         <div class="col-sm-3">
 
@@ -261,7 +264,7 @@
 
                     </div>
 
-                    <div class="row">
+                    <div class="row po-payment-row">
                         @*<div class="col-sm-8"><h2>Purchase <b>Order</b></h2></div>*@
                         <div class="col-sm-3">
 
@@ -275,7 +278,7 @@
 
 
 
-                    <div class="row">
+                    <div class="row po-payment-row">
                         @*<div class="col-sm-8"><h2>Purchase <b>Order</b></h2></div>*@
 
                         <div class="col-sm-3">
@@ -289,7 +292,7 @@
 
                     </div>
 
-                    <div class="row">
+                    <div class="row po-payment-row po-save-row">
                         @*<div class="col-sm-8"><h2>Purchase <b>Order</b></h2></div>*@
                         <div class="col-sm-3">
 

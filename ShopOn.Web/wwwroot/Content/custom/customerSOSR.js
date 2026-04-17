@@ -121,18 +121,18 @@ $(document).ready(function () {
         var index = $("table tbody tr:last-child").index();
         //var rowCount = 
         var row = '<tr>' +
-            '<td id="SNo' + txtSerialNum + '">' + $('#selectedProducts tr').length + '</td>' +
-            '<td style="display:none;"><input type="hidden" name="SaleOrderDetail.Index" value="' + txtSerialNum + '" /></td>' +
-            '<td style="display:none;"><input type="text" readonly class="form-control classBGcolor" name="SaleOrderDetail[' + txtSerialNum + '].ProductId" id="idn' + txtSerialNum + '"></td>' +
-            '<td><input type="text" class="form-control" autocomplete="off" name="name' + txtSerialNum + '" id="name' + txtSerialNum + '"></td>' +
-            '<td><input type="text"  class="form-control autocomplete="off" classBGcolor" name="SaleOrderDetail[' + txtSerialNum + '].SalePrice" id="salePrice' + txtSerialNum + '"></td>' +
-            '<td><input type="text" class="form-control" autocomplete="off" name="SaleOrderDetail[' + txtSerialNum + '].Quantity" id="quantity' + txtSerialNum + '"></td>' +
-            '<td><select class="form-control" name="SaleOrderDetail[' + txtSerialNum + '].IsPack" id="isPack' + txtSerialNum + '"><option value="false">Piece</option><option value="true" selected>Pack</option></select></td>' +
-            '<td><input type="text" class="form-control" readonly autocomplete="off" name="SaleOrderDetail[' + txtSerialNum + '].PerPack" id="perPack' + txtSerialNum + '"></td>' +
+            '<td id="SNo' + txtSerialNum + '" data-label="#">' + $('#selectedProducts tr').length + '</td>' +
+            '<td style="display:none;" data-label="Index"><input type="hidden" name="SaleOrderDetail.Index" value="' + txtSerialNum + '" /></td>' +
+            '<td style="display:none;" data-label="Product Id"><input type="text" readonly class="form-control classBGcolor" name="SaleOrderDetail[' + txtSerialNum + '].ProductId" id="idn' + txtSerialNum + '"></td>' +
+            '<td data-label="Name"><input type="text" class="form-control" autocomplete="off" name="name' + txtSerialNum + '" id="name' + txtSerialNum + '"></td>' +
+            '<td data-label="Sale Price"><input type="text"  class="form-control autocomplete="off" classBGcolor" name="SaleOrderDetail[' + txtSerialNum + '].SalePrice" id="salePrice' + txtSerialNum + '"></td>' +
+            '<td data-label="Quantity"><input type="text" class="form-control" autocomplete="off" name="SaleOrderDetail[' + txtSerialNum + '].Quantity" id="quantity' + txtSerialNum + '"></td>' +
+            '<td data-label="Unit"><select class="form-control" name="SaleOrderDetail[' + txtSerialNum + '].IsPack" id="isPack' + txtSerialNum + '"><option value="false">Piece</option><option value="true" selected>Pack</option></select></td>' +
+            '<td data-label="Per Pack"><input type="text" class="form-control" readonly autocomplete="off" name="SaleOrderDetail[' + txtSerialNum + '].PerPack" id="perPack' + txtSerialNum + '"></td>' +
 
-            '<td><input type="text" readonly class="form-control classBGcolor" name="itemTotal' + txtSerialNum + '" id="itemTotal' + txtSerialNum + '"tabindex="-1"></td>' +
-            '<td style="display:none;"><select class="form-control" name="SaleOrderDetail[' + txtSerialNum + '].SaleType" id="saleType' + txtSerialNum + '"><option value="false" selected>Order</option><option value="true">Return</option></select></td>' +
-            '<td><button type="button" id="delete' + txtSerialNum + '" class="delete btn btn-default add-new"> <a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></button></td>' +
+            '<td data-label="Item Total"><input type="text" readonly class="form-control classBGcolor" name="itemTotal' + txtSerialNum + '" id="itemTotal' + txtSerialNum + '"tabindex="-1"></td>' +
+            '<td style="display:none;" data-label="Type"><select class="form-control" name="SaleOrderDetail[' + txtSerialNum + '].SaleType" id="saleType' + txtSerialNum + '"><option value="false" selected>Order</option><option value="true">Return</option></select></td>' +
+            '<td data-label="Actions"><button type="button" id="delete' + txtSerialNum + '" class="delete btn btn-default add-new"> <a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a></button></td>' +
             '</tr>';
 
         //alert(row);

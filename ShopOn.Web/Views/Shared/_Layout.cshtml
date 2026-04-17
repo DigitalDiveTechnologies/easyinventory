@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>@ViewBag.Title - StockPulse</title>
+    <title>@ViewBag.Title - Inventra</title>
 
 
     <!-- Tell the browser to be responsive to screen width -->
@@ -62,14 +62,16 @@
     <!-- ./wrapper -->
     <!-- jQuery 3 -->
     <script src="~/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 3.3.7 -->
+    <script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
     @*already commented <script src="~/bower_components/jquery-ui/jquery-ui.min.js"></script>*@
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
-        $.widget.bridge('uibutton', $.ui.button);
+        if ($.ui && $.ui.button) {
+            $.widget.bridge('uibutton', $.ui.button);
+        }
     </script>
-    <!-- Bootstrap 3.3.7 -->
-    @*<script src="~/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>*@
     <!-- Morris.js charts -->
     @*<script src="~/bower_components/raphael/raphael.min.js"></script>*@
     @*<script src="~/bower_components/morris.js/morris.min.js"></script>*@
@@ -119,7 +121,7 @@
                 <span class="logo-lg sp-logo">
                     <span class="sp-logo__icon"><i class="fa fa-line-chart"></i></span>
                     <span class="sp-logo__text">
-                        <span class="sp-logo__name">StockPulse</span>
+                        <span class="sp-logo__name">Inventra</span>
                         <span class="sp-logo__sub">Inventory Management</span>
                     </span>
                 </span>
@@ -147,7 +149,7 @@
                         @{
                             var currentUser = ViewBag.CurrentUser as EasyInventory.PgData.Entities.Employee;
                             var displayName = currentUser?.FirstName ?? currentUser?.Login ?? "Admin User";
-                            var displayEmail = currentUser?.Login ?? "admin@stockpulse.com";
+                            var displayEmail = currentUser?.Login ?? "admin@inventra.com";
                             var initials = displayName.Length > 0 ? displayName.Substring(0, 1).ToUpper() : "A";
                         }
                         <div class="sp-user">
@@ -413,7 +415,7 @@
             <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
         </li>*@
 
-                        @* legacy nav hidden by StockPulse topbar *@
+                        @* legacy nav hidden by Inventra topbar *@
                     </ul>
                 </div>
             </nav>
@@ -569,7 +571,7 @@
             </ul>
         </li>*@
                 </ul>
-                <div class="sp-sidebar-footer">© 2026 StockPulse</div>
+                <div class="sp-sidebar-footer">© 2026 Inventra</div>
             </section>
             <!-- /.sidebar -->
         </aside>
@@ -595,7 +597,7 @@
             <div class="pull-right hidden-xs">
                 @*<b>Version</b> 1.0.0*@
             </div>
-            <strong>Copyright &copy; @DateTime.Now.Year <a href="#">StockPulse</a>.</strong> All rights
+            <strong>Copyright &copy; @DateTime.Now.Year <a href="#">Inventra</a>.</strong> All rights
             reserved.
         </footer>
         <!-- Control Sidebar -->

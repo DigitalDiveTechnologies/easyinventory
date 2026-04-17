@@ -28,10 +28,10 @@
     @Html.AntiForgeryToken()
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
 
-    <div class="container" id="container">
+    <div class="container so-create-page" id="container">
         <div class="table-wrapper">
             <div class="table-title">
-                <div class="row">
+                <div class="row po-form-row">
                     <div class="col-sm-offset-5"><h2>Sale <b>Order</b></h2></div>
                     @*<div class="col-sm-4">
                 <button type="button" id="addNewRow" class="btn btn-info add-new"><i class="fa fa-plus"></i> Add New</button>
@@ -44,7 +44,7 @@
                 @*@Html.Hidden("SaleOrder.SaleReturn", ViewBag.IsReturn)*@
                 @*<input type="hidden" name="SaleOrder.CustomerId" id="idnCustomer" value="@custId" />*@
                 <input type="hidden" name="SaleOrder.CustomerId" id="idnCustomer" value="" />
-                <div class="row">
+                <div class="row po-form-row">
                     <div class="col-sm-6">
                         <h5><b>Customer Name</b></h5>
                         @*@{
@@ -68,6 +68,7 @@
             </div>
 
 
+            <div class="po-table-scroll so-product-scroll">
             <table id="selectedProducts" class="table table-bordered">
                 <thead>
                     <tr>
@@ -110,31 +111,31 @@
                 </thead>
                 <tbody>
                     <tr>
-                        <td id="SNo0">1</td>
-                        <td style="display:none;"><input type="hidden" name="SaleOrderDetail.Index" value="0" /></td>
-                        <td style="display:none;"><input type="text" readonly class="form-control classBGcolor" name="SaleOrderDetail[0].ProductId" id="idn0"></td>
+                        <td id="SNo0" data-label="#">1</td>
+                        <td style="display:none;" data-label="Index"><input type="hidden" name="SaleOrderDetail.Index" value="0" /></td>
+                        <td style="display:none;" data-label="Product Id"><input type="text" readonly class="form-control classBGcolor" name="SaleOrderDetail[0].ProductId" id="idn0"></td>
                         @*<td><input type="text" class="form-control" name="name0" id="name0" onkeyup="myFunction()" data-toggle="tooltip" data-placement="top" title="Type product name"></td>*@
                         @*<td><input type="text" autocomplete="off"  class="form-control" name="name0" id="name0" onkeyup="myFunction()"></td>*@
-                        <td><input type="text" autocomplete="off" class="form-control" name="name0" id="name0" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"></td>
-                        <td><input type="text" autocomplete="off" class="form-control classBGcolor" name="SaleOrderDetail[0].SalePrice" id="salePrice0"></td>
-                        <td><input type="text" autocomplete="off" class="form-control" name="SaleOrderDetail[0].Quantity" id="quantity0"></td>
+                        <td data-label="Name"><input type="text" autocomplete="off" class="form-control" name="name0" id="name0" placeholder="Type product name" data-toggle="tooltip" data-placement="top" title="Type product name"></td>
+                        <td data-label="Sale Price"><input type="text" autocomplete="off" class="form-control classBGcolor" name="SaleOrderDetail[0].SalePrice" id="salePrice0"></td>
+                        <td data-label="Quantity"><input type="text" autocomplete="off" class="form-control" name="SaleOrderDetail[0].Quantity" id="quantity0"></td>
 
-                        <td>
+                        <td data-label="Unit">
                             <select class="form-control" name="SaleOrderDetail[0].IsPack" id="isPack0">
                                 <option value="false">Piece</option>
                                 <option value="true" selected>Pack</option>
                             </select>
                         </td>
-                        <td><input type="text" readonly autocomplete="off" class="form-control" name="SaleOrderDetail[0].PerPack" id="perPack0"></td>
-                        <td><input type="text" readonly class="form-control classBGcolor" name="itemTotal0" id="itemTotal0" tabindex="-1"></td>
-                        <td style="display:none;">
+                        <td data-label="Per Pack"><input type="text" readonly autocomplete="off" class="form-control" name="SaleOrderDetail[0].PerPack" id="perPack0"></td>
+                        <td data-label="Item Total"><input type="text" readonly class="form-control classBGcolor" name="itemTotal0" id="itemTotal0" tabindex="-1"></td>
+                        <td style="display:none;" data-label="Type">
                             <select class="form-control" name="SaleOrderDetail[0].SaleType" id="saleType0">
                                 <option value="false" selected>Order</option>
                                 <option value="true">Return</option>
                             </select>
                         </td>
 
-                        <td>
+                        <td data-label="Actions">
                             @*<a class="add" title="Add" data-toggle="tooltip"><i class="material-icons">&#xE03B;</i></a>
                                 <a class="edit" title="Edit" data-toggle="tooltip"><i class="material-icons">&#xE254;</i></a>*@
                             @*<a class="delete" title="Delete" data-toggle="tooltip"><i class="material-icons">&#xE872;</i></a>*@
@@ -147,16 +148,18 @@
                 </tbody>
 
             </table>
+            </div>
 
             <div class="table-title">
-                <div class="row">
+                <div class="row po-form-row">
                     <div class="col-sm-2">
                         <button type="button" id="addNewRow" class="btn btn-primary add-new"><i class="fa fa-plus"></i> New Row</button>
                     </div>
                 </div>
             </div>
 
-            <div style="display:inline" id="dvCalculations">
+            <div id="dvCalculations" class="po-calculations">
+                <div class="po-table-scroll po-summary-scroll">
                 <table id="grandTotal"  class="borderless">
                     <thead>
                         <tr>
@@ -280,7 +283,7 @@
                             <td></td>
                             <td><input type="text" readonly class="form-control classBorder0" name="el1_2" id="el1_2" tabindex="-1"></td>
                             <td></td>
-                            <td colspan="2" rowspan="2"><button type="submit" id="CreateSO" class="btn btn-primary" style="width: 430px; height: 70px; margin-left: auto; margin-right: auto; display: block; margin-top: auto; margin-bottom: 0%; font-size: 32px;">Pay</button></td>
+                        <td colspan="2" rowspan="2"><button type="submit" id="CreateSO" class="btn btn-primary so-pay-btn" style="width: 430px; height: 70px; margin-left: auto; margin-right: auto; display: block; margin-top: auto; margin-bottom: 0%; font-size: 32px;">Pay</button></td>
                             @*<td></td>*@
                             <td></td>
                         </tr>
@@ -296,14 +299,15 @@
                     </tbody>
 
                 </table>
+                </div>
 
 
 
 
 
-                <div class="table-title">
+                <div class="table-title po-payment-block">
 
-                    <div class="row">
+                    <div class="row po-payment-row">
                         @*<div class="col-sm-8"><h2>Sale <b>Order</b></h2></div>*@
                         <div class="col-sm-3">
 
@@ -316,7 +320,7 @@
 
                     </div>
 
-                    <div class="row">
+                    <div class="row po-payment-row">
                         @*<div class="col-sm-8"><h2>Sale <b>Order</b></h2></div>*@
                         <div class="col-sm-3">
 
@@ -330,7 +334,7 @@
 
 
 
-                    <div class="row">
+                    <div class="row po-payment-row">
                         @*<div class="col-sm-8"><h2>Sale <b>Order</b></h2></div>*@
 
                         <div class="col-sm-3">
@@ -344,7 +348,7 @@
 
                     </div>
 
-                    <div class="row">
+                    <div class="row po-payment-row po-save-row">
                         @*<div class="col-sm-8"><h2>Sale <b>Order</b></h2></div>*@
                         <div class="col-sm-3">
 
